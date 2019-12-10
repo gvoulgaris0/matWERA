@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>read_WERA_MTfromSORT</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-09"><meta name="DC.source" content="read_WERA_MTfromSORT.m"><style type="text/css">
+      --><title>read_WERA_MTfromSORT</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-10"><meta name="DC.source" content="read_WERA_MTfromSORT.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -71,14 +71,18 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <span class="comment">%</span>
 <span class="comment">% Read the value MT from the WERA sorted (SORT/RFI) binary file created</span>
 <span class="comment">% by the WERA systems developed by Dr. Klaus-Werner Gurgel at the University</span>
-<span class="comment">% of Hamburg and commercially available by Helzel-Messtechnic GmbH.</span>
+<span class="comment">% of Hamburg and commercially available by Helzel-Messtechnic GmbH. This</span>
+<span class="comment">% value is used in read_WERA_spec.m to scale the spectrum.</span>
 <span class="comment">%</span>
-</pre><h2 id="3">Input</h2><pre>fname = filename of the sort or rfi file (including extention)</pre><h2 id="4">Output</h2><pre>MT = MT value to be used to scale the spectrum back to original units</pre><h2 id="5">Uses</h2><pre>read_WERA_header.m</pre><h2 id="6">Copyright 2019, George Voulgaris, University of South Carolina</h2><p>This file is part of matWERA.</p><p>matWERA is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p><p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p><p>You should have received a copy of the GNU General Public License along with this program.  If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p><p>If you find an error please notify G. Voulgaris at <a href="mailto:gvoulgaris@geol.sc.edu">gvoulgaris@geol.sc.edu</a></p><pre>First version developed on September 10, 2011</pre><pre class="codeinput">echo <span class="string">off</span>
+</pre><h2 id="3">Input</h2><pre>fname = filename of the sort or rfi file (including extention)</pre><h2 id="4">Output</h2><pre>MT = MT value to be used to scale the spectrum back to original units
+     if no SORT file is found, then a default value of MT=1200 is returned.</pre><h2 id="5">Uses</h2><pre>read_WERA_header.m</pre><h2 id="6">Copyright 2019, George Voulgaris, University of South Carolina</h2><p>This file is part of matWERA.</p><p>matWERA is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p><p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p><p>You should have received a copy of the GNU General Public License along with this program.  If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p><p>If you find an error please notify G. Voulgaris at <a href="mailto:gvoulgaris@geol.sc.edu">gvoulgaris@geol.sc.edu</a></p><pre>First version developed on September 10, 2011</pre><pre class="codeinput">echo <span class="string">off</span>
 <span class="comment">% -------------------- Open/ Start Reading the data file  -----------------</span>
 filename     = [fname,<span class="string">'.SORT'</span>];
 s            = dir(filename);
 <span class="keyword">if</span> isempty(s)==1
-   error([fname, <span class="string">' is not found, check path and/or syntax, Aborting'</span>])
+   disp([filename, <span class="string">' SORT file not found, using default (approximate) value of MT=1200'</span>])
+   MT = 1200;
+   <span class="keyword">return</span>
 <span class="keyword">end</span>
    filebytes = s.bytes;
 <span class="comment">%</span>
@@ -93,9 +97,6 @@ s            = dir(filename);
 <span class="comment">%--------------------------------------------------------------------------</span>
 [WERA] = read_WERA_header(head);
 MT     = WERA.MT;
-WERA.LAT  = str2double(header.lat);
-WERA.LON  = str2double(header.lon);
-WERA.NORD = str2double(header.nord);
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -105,13 +106,15 @@ function [MT]=read_WERA_MTfromSORT(fname)
 %
 % Read the value MT from the WERA sorted (SORT/RFI) binary file created
 % by the WERA systems developed by Dr. Klaus-Werner Gurgel at the University 
-% of Hamburg and commercially available by Helzel-Messtechnic GmbH.
+% of Hamburg and commercially available by Helzel-Messtechnic GmbH. This
+% value is used in read_WERA_spec.m to scale the spectrum.
 %
 %% Input
 %  fname = filename of the sort or rfi file (including extention)
 %          
 %% Output
 %  MT = MT value to be used to scale the spectrum back to original units
+%       if no SORT file is found, then a default value of MT=1200 is returned.
 %
 %% Uses
 %  read_WERA_header.m
@@ -142,7 +145,9 @@ echo off
 filename     = [fname,'.SORT'];
 s            = dir(filename);
 if isempty(s)==1
-   error([fname, ' is not found, check path and/or syntax, Aborting'])
+   disp([filename, ' SORT file not found, using default (approximate) value of MT=1200'])
+   MT = 1200;
+   return
 end 
    filebytes = s.bytes;
 %
@@ -157,9 +162,6 @@ end
 %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
 [WERA] = read_WERA_header(head);
 MT     = WERA.MT;
-WERA.LAT  = str2double(header.lat);
-WERA.LON  = str2double(header.lon);
-WERA.NORD = str2double(header.nord);
 end
 
 ##### SOURCE END #####

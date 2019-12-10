@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>read_WERA_spec</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-09"><meta name="DC.source" content="read_WERA_spec.m"><style type="text/css">
+      --><title>read_WERA_spec</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-10"><meta name="DC.source" content="read_WERA_spec.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -100,8 +100,6 @@ geog2utm.m</pre><h2 id="7">Copyright 2019, George Voulgaris, University of South
 <span class="comment">%            scale = 2*(Po*MT*MAX_GAIN*NSER)^2</span>
 <span class="comment">%</span>
 Po = 2^15;     <span class="comment">% Reference level based on ADC bits</span>
-MT = 1200;     <span class="comment">% This parameter is approximate. The exact valye can be found only</span>
-               <span class="comment">% on the header of the SORT file but not the SPEC file</span>
 MAX_GAIN=7.9;  <span class="comment">% Approximate Value the correct value is the max of the</span>
                <span class="comment">% wera_gain.asc file</span>
 <span class="comment">%NSER  value is set from the header.</span>
@@ -172,7 +170,6 @@ Time         = datenum([WERA.DATE WERA.TIME]);
         clear <span class="string">data</span>
         PXY  = cell(NX,NY);
         <span class="keyword">for</span> i=1:NCOV                      <span class="comment">%blocks*64</span>
-            disp(i)
             PXY{PX(i),PY(i)}=10*log10(Pxy(:,i)/SCALE);
         <span class="keyword">end</span>
         LAT = LATo;
@@ -294,8 +291,6 @@ echo off
 %            scale = 2*(Po*MT*MAX_GAIN*NSER)^2
 %
 Po = 2^15;     % Reference level based on ADC bits 
-MT = 1200;     % This parameter is approximate. The exact valye can be found only
-               % on the header of the SORT file but not the SPEC file
 MAX_GAIN=7.9;  % Approximate Value the correct value is the max of the 
                % wera_gain.asc file
 %NSER  value is set from the header.
@@ -366,7 +361,6 @@ switch upper(WERA.HDCODE)
         clear data
         PXY  = cell(NX,NY);
         for i=1:NCOV                      %blocks*64
-            disp(i)
             PXY{PX(i),PY(i)}=10*log10(Pxy(:,i)/SCALE);
         end
         LAT = LATo;
