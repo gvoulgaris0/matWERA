@@ -4,13 +4,15 @@ function [MT]=read_WERA_MTfromSORT(fname)
 %
 % Read the value MT from the WERA sorted (SORT/RFI) binary file created
 % by the WERA systems developed by Dr. Klaus-Werner Gurgel at the University 
-% of Hamburg and commercially available by Helzel-Messtechnic GmbH.
+% of Hamburg and commercially available by Helzel-Messtechnic GmbH. This
+% value is used in read_WERA_spec.m to scale the spectrum.
 %
 %% Input
 %  fname = filename of the sort or rfi file (including extention)
 %          
 %% Output
 %  MT = MT value to be used to scale the spectrum back to original units
+%       if no SORT file is found, then a default value of MT=1200 is returned.
 %
 %% Uses
 %  read_WERA_header.m
@@ -41,7 +43,9 @@ echo off
 filename     = [fname,'.SORT'];
 s            = dir(filename);
 if isempty(s)==1
-   error([fname, ' is not found, check path and/or syntax, Aborting'])
+   disp([filename, ' SORT file not found, using default (approximate) value of MT=1200'])
+   MT = 1200;
+   return
 end 
    filebytes = s.bytes;
 %
@@ -56,7 +60,4 @@ end
 %--------------------------------------------------------------------------
 [WERA] = read_WERA_header(head);
 MT     = WERA.MT;
-WERA.LAT  = str2double(header.lat);
-WERA.LON  = str2double(header.lon);
-WERA.NORD = str2double(header.nord);
 end

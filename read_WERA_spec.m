@@ -64,8 +64,6 @@ echo off
 %            scale = 2*(Po*MT*MAX_GAIN*NSER)^2
 %
 Po = 2^15;     % Reference level based on ADC bits 
-MT = 1200;     % This parameter is approximate. The exact valye can be found only
-               % on the header of the SORT file but not the SPEC file
 MAX_GAIN=7.9;  % Approximate Value the correct value is the max of the 
                % wera_gain.asc file
 %NSER  value is set from the header.
@@ -136,7 +134,6 @@ switch upper(WERA.HDCODE)
         clear data
         PXY  = cell(NX,NY);
         for i=1:NCOV                      %blocks*64
-            disp(i)
             PXY{PX(i),PY(i)}=10*log10(Pxy(:,i)/SCALE);
         end
         LAT = LATo;
