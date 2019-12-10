@@ -1,0 +1,425 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>read_WERA_spec</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-09"><meta name="DC.source" content="read_WERA_spec.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">read_WERA_spec.m</a></li><li><a href="#3">Inputs</a></li><li><a href="#4">Output</a></li><li><a href="#5">Intermediate Variables:</a></li><li><a href="#6">Uses</a></li><li><a href="#7">Copyright 2019, George Voulgaris, University of South Carolina</a></li></ul></div><h2 id="1">read_WERA_spec.m</h2><pre class="codeinput"><span class="keyword">function</span> [Time,LON,LAT,X,Y,freq,fbragg,PXY]=read_WERA_spec(fname,GEO)
+</pre><pre class="codeinput"><span class="comment">% [Time,LON,LAT,X,Y,freq,fbragg,PXY]=read_WERA_spec(fname,[GEO])</span>
+<span class="comment">%</span>
+<span class="comment">% Read WERA binary spec files created with the Fortran science package used</span>
+<span class="comment">% in the WERA HF radar systems developed by Dr. Klaus-Werner Gurgel at the</span>
+<span class="comment">% University of Hamburg and commercially available by Helzel-Messtechnic GmbH.</span>
+<span class="comment">%</span>
+<span class="comment">% use examples:</span>
+<span class="comment">%</span>
+<span class="comment">% [time,lon,lat,x,y,freq,fbragg,PXY]=read_WERA_spec(filename,'UTM');</span>
+<span class="comment">% [time,lon,lat,x,y,freq,fbragg,PXY]=read_WERA_spec(filename);</span>
+<span class="comment">%</span>
+</pre><h2 id="3">Inputs</h2><pre>filename = the name of the spec file you want to read (including extension SPEC)
+GEO      = Optional string. if ='UTM', then the grid is also converted
+           to UTM coordinate system.</pre><h2 id="4">Output</h2><pre>Time:               Time in MATLAB datenum format at the middle of burst
+freq:               Spectral frequency (in Hz)
+fbragg:             Bragg Frequency for this system (in Hz)
+LON,LAT:            if SPEC3: Grid coordinates in Long and Lat
+                    if SPEC2: Rx array location coordinates in Long and Lat
+X,Y:                if SPEC3: Orthogonal coordinate system with 0,0 being
+                              at the WERA station location (in meters)
+                    if SPEC2: Empty, as SPEC2 does not support this
+Pxy{PX,PY}(1:freq): Cell Array of Spectral Energy (in db with an approximate
+                    scaling applied to correct for FFT size, ADC etc.
+                    (for more details see inside program).</pre><h2 id="5">Intermediate Variables:</h2><pre>PX, PY:             Grid positions in integer numbers</pre><h2 id="6">Uses</h2><pre>read_WERA_header.m
+read_WERA_MTfromSORT.m
+geog2utm.m</pre><h2 id="7">Copyright 2019, George Voulgaris, University of South Carolina</h2><p>This file is part of matWERA.</p><p>matWERA is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p><p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p><p>You should have received a copy of the GNU General Public License along with this program.  If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p><p>If you find an error please notify G. Voulgaris at <a href="mailto:gvoulgaris@geol.sc.edu">gvoulgaris@geol.sc.edu</a></p><pre class="codeinput">echo <span class="string">off</span>
+<span class="comment">%</span>
+<span class="comment">%       01/22/2011 - Time at the center of the burst is estimated &amp; output.</span>
+<span class="comment">%</span>
+<span class="comment">% ------- Parameters Used for Scaling the Spectrum ------------------------</span>
+<span class="comment">%            scale = 2*(Po*MT*MAX_GAIN*NSER)^2</span>
+<span class="comment">%</span>
+Po = 2^15;     <span class="comment">% Reference level based on ADC bits</span>
+MT = 1200;     <span class="comment">% This parameter is approximate. The exact valye can be found only</span>
+               <span class="comment">% on the header of the SORT file but not the SPEC file</span>
+MAX_GAIN=7.9;  <span class="comment">% Approximate Value the correct value is the max of the</span>
+               <span class="comment">% wera_gain.asc file</span>
+<span class="comment">%NSER  value is set from the header.</span>
+<span class="comment">% -------------------- Open/ Start Reading the data file  -----------------</span>
+<span class="keyword">if</span> strcmpi(fname(end-3:end),<span class="string">'spec'</span>)==1
+    filename  = fname;
+    s         = dir(filename);
+    <span class="keyword">if</span> isempty(s)==1
+        error([fname, <span class="string">' is not found, check path and/or syntax, Aborting'</span>])
+    <span class="keyword">end</span>
+    filebytes = s.bytes;
+<span class="keyword">else</span>
+    error([fname, <span class="string">' is not a SPEC type file file, Aborting'</span>])
+<span class="keyword">end</span>
+<span class="comment">%</span>
+<span class="keyword">if</span> filebytes&gt;512
+    fid  = fopen(filename,<span class="string">'rb'</span>,<span class="string">'ieee-le.l64'</span>);  <span class="comment">% Open the file as a binary</span>
+    head = fread(fid,512,<span class="string">'char'</span>);
+<span class="keyword">else</span>
+    error([filename, <span class="string">' size is less than 512 bytes, Aborting'</span>])
+<span class="keyword">end</span>
+<span class="comment">% -------------------  Read the Header Information ------------------------</span>
+[WERA] = read_WERA_header(head);
+<span class="comment">%-------------------------- frequency calcs -------------------------------</span>
+ fbragg     = WERA.fbragg;   <span class="comment">% Bragg Frequency (from header)</span>
+ dt         = WERA.T_chirp;  <span class="comment">% Sampling time interval (in s)</span>
+ fs         = 1./dt;         <span class="comment">% Sampling Frequency (in Hz)</span>
+ nftl       = WERA.NFTL;     <span class="comment">% Number of points in FFT (from header)</span>
+ df         =  fs/nftl;      <span class="comment">% Doppler spectrum freq. resolution</span>
+ freq_start = -fs/2;
+ freq_end   = +fs/2;
+ freq       = (freq_start+df):df:freq_end;  <span class="comment">% Doppler spectrum freq. array</span>
+<span class="comment">%-------------------------------------------------------------------------</span>
+ NSER  = WERA.NSER;
+ NX    = WERA.NX;
+ NY    = WERA.NY;
+ DGT   = WERA.DGT;
+ LONo  = WERA.LONo;
+ LATo  = WERA.LATo;
+ GRAD  = 180.0/pi;
+ NCOV  = WERA.N_COVERED;
+ MT    = read_WERA_MTfromSORT(fname);
+ SCALE = 2*(Po*NSER*MT*MAX_GAIN)^2;       <span class="comment">%New</span>
+ <span class="comment">%SCALE = 1;</span>
+<span class="comment">%------ Estimate time stamp at the middle of the data collection period ---</span>
+dt           = 0.5*NSER*WERA.T_chirp;     <span class="comment">% Middle of data in secs</span>
+WERA.TIME(3) = WERA.TIME(3)+dt;           <span class="comment">% Add the extra secs</span>
+Time         = datenum([WERA.DATE WERA.TIME]);
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">%                         Read Data from the File</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">switch</span> upper(WERA.HDCODE)
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">%                         Read pointers SPEC2</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+    <span class="keyword">case</span>{<span class="string">'FMSPC2'</span>}
+        blocks =floor(NCOV/64)+1;
+        PX    = zeros(blocks*64);        <span class="comment">% Pre-allocation for speed</span>
+        PY    = PX;
+        <span class="keyword">for</span> icnt = 1:blocks
+            list_locs = fread(fid,128,<span class="string">'int32'</span>);
+            PX((icnt-1)*64+(1:64)) = list_locs(1:2:128);
+            PY((icnt-1)*64+(1:64)) = list_locs(2:2:128);
+        <span class="keyword">end</span>
+        data = fread(fid,NCOV*nftl,<span class="string">'float32'</span>);
+        fclose(fid);
+        Pxy  = reshape(data,nftl,NCOV);
+        clear <span class="string">data</span>
+        PXY  = cell(NX,NY);
+        <span class="keyword">for</span> i=1:NCOV                      <span class="comment">%blocks*64</span>
+            disp(i)
+            PXY{PX(i),PY(i)}=10*log10(Pxy(:,i)/SCALE);
+        <span class="keyword">end</span>
+        LAT = LATo;
+        LON = LONo;
+        X   = 0;
+        Y   = 0;
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">%                         Read pointers SPEC3</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+    <span class="keyword">case</span>{<span class="string">'FMSPC3'</span>}
+        blocks = (floor(NCOV/32)+1);
+        PX    = zeros(blocks*32);        <span class="comment">% Pre-allocation for speed</span>
+        PY    = PX;
+        LAT   = PX;
+        LON   = PX;
+        <span class="keyword">for</span> icnt = 1:blocks
+            list_locs =fread(fid,128,<span class="string">'int32'</span>);
+            PX((icnt-1)*32+(1:32))  = list_locs(1:4:128);
+            PY((icnt-1)*32+(1:32))  = list_locs(2:4:128);
+            LAT((icnt-1)*32+(1:32)) = list_locs(3:4:128);
+            LON((icnt-1)*32+(1:32)) = list_locs(4:4:128);
+        <span class="keyword">end</span>
+        PX   = PX(1:NCOV);
+        PY   = PY(1:NCOV);
+        LAT  = LAT(1:NCOV)*1e-7;
+        LON  = LON(1:NCOV)*1e-7;
+        data = fread(fid,NCOV*nftl,<span class="string">'float32'</span>);
+        fclose(fid);
+        Pxy  = reshape(data,nftl,NCOV);
+        PXY  = cell(NX,NY);
+        <span class="keyword">for</span> i = 1:NCOV
+            PXY{PX(i),PY(i)} = 10*log10(Pxy(:,i)/SCALE);
+        <span class="keyword">end</span>
+        <span class="comment">%---- Geographical to orthogonal UTM coordinate transformation ----</span>
+        <span class="keyword">if</span> strcmp(GEO,<span class="string">'UTM'</span>)==1
+            [X,Y]      = geog2utm(LON,LAT,LONo,LATo);  <span class="comment">% Geographic 2 Orthogonal</span>
+            X          = X*1000;                       <span class="comment">% Convert from km to m</span>
+            Y          = Y*1000;                       <span class="comment">% Convert from km to m</span>
+        <span class="keyword">else</span>
+            X          = 0;
+            Y          = 0;
+        <span class="keyword">end</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+        <span class="keyword">case</span> {<span class="string">'FUTURE'</span>}
+        <span class="comment">% To add future cases/formats</span>
+        fclose(fid);
+<span class="comment">%--------------------------------------------------------------------------</span>
+    <span class="keyword">otherwise</span>
+    disp(<span class="string">'Header FMSPC2 or FMSPC3 was expected but not found'</span>);
+    fclose(fid);
+    <span class="keyword">return</span>
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% read_WERA_spec.m
+function [Time,LON,LAT,X,Y,freq,fbragg,PXY]=read_WERA_spec(fname,GEO)
+% [Time,LON,LAT,X,Y,freq,fbragg,PXY]=read_WERA_spec(fname,[GEO])
+% 
+% Read WERA binary spec files created with the Fortran science package used
+% in the WERA HF radar systems developed by Dr. Klaus-Werner Gurgel at the 
+% University of Hamburg and commercially available by Helzel-Messtechnic GmbH.
+% 
+% use examples:
+%
+% [time,lon,lat,x,y,freq,fbragg,PXY]=read_WERA_spec(filename,'UTM');
+% [time,lon,lat,x,y,freq,fbragg,PXY]=read_WERA_spec(filename);
+%
+%% Inputs
+%  filename = the name of the spec file you want to read (including extension SPEC)   
+%  GEO      = Optional string. if ='UTM', then the grid is also converted 
+%             to UTM coordinate system.
+%     
+%% Output
+%  Time:               Time in MATLAB datenum format at the middle of burst
+%  freq:               Spectral frequency (in Hz)
+%  fbragg:             Bragg Frequency for this system (in Hz)
+%  LON,LAT:            if SPEC3: Grid coordinates in Long and Lat
+%                      if SPEC2: Rx array location coordinates in Long and Lat
+%  X,Y:                if SPEC3: Orthogonal coordinate system with 0,0 being
+%                                at the WERA station location (in meters) 
+%                      if SPEC2: Empty, as SPEC2 does not support this
+%  Pxy{PX,PY}(1:freq): Cell Array of Spectral Energy (in db with an approximate 
+%                      scaling applied to correct for FFT size, ADC etc. 
+%                      (for more details see inside program).
+%
+%% Intermediate Variables:
+%  PX, PY:             Grid positions in integer numbers
+%        
+%% Uses    
+%  read_WERA_header.m
+%  read_WERA_MTfromSORT.m
+%  geog2utm.m
+%        
+%% Copyright 2019, George Voulgaris, University of South Carolina
+%
+% This file is part of matWERA.
+%
+% matWERA is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+%
+% If you find an error please notify G. Voulgaris at gvoulgaris@geol.sc.edu
+%%
+echo off
+%
+%       01/22/2011 - Time at the center of the burst is estimated & output.
+%
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- Parameters Used for Scaling the Spectrum REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%            scale = 2*(Po*MT*MAX_GAIN*NSER)^2
+%
+Po = 2^15;     % Reference level based on ADC bits 
+MT = 1200;     % This parameter is approximate. The exact valye can be found only
+               % on the header of the SORT file but not the SPEC file
+MAX_GAIN=7.9;  % Approximate Value the correct value is the max of the 
+               % wera_gain.asc file
+%NSER  value is set from the header.
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH Open/ Start Reading the data file  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+if strcmpi(fname(end-3:end),'spec')==1  
+    filename  = fname;
+    s         = dir(filename);
+    if isempty(s)==1
+        error([fname, ' is not found, check path and/or syntax, Aborting'])
+    end 
+    filebytes = s.bytes;
+else
+    error([fname, ' is not a SPEC type file file, Aborting'])
+end
+%
+if filebytes>512
+    fid  = fopen(filename,'rb','ieee-le.l64');  % Open the file as a binary
+    head = fread(fid,512,'char');
+else
+    error([filename, ' size is less than 512 bytes, Aborting'])
+end
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-  Read the Header Information REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+[WERA] = read_WERA_header(head);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH frequency calcs REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+ fbragg     = WERA.fbragg;   % Bragg Frequency (from header)
+ dt         = WERA.T_chirp;  % Sampling time interval (in s)
+ fs         = 1./dt;         % Sampling Frequency (in Hz)
+ nftl       = WERA.NFTL;     % Number of points in FFT (from header)
+ df         =  fs/nftl;      % Doppler spectrum freq. resolution
+ freq_start = -fs/2; 
+ freq_end   = +fs/2;
+ freq       = (freq_start+df):df:freq_end;  % Doppler spectrum freq. array
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+ NSER  = WERA.NSER;
+ NX    = WERA.NX;
+ NY    = WERA.NY;
+ DGT   = WERA.DGT;
+ LONo  = WERA.LONo;
+ LATo  = WERA.LATo;
+ GRAD  = 180.0/pi;
+ NCOV  = WERA.N_COVERED;
+ MT    = read_WERA_MTfromSORT(fname);
+ SCALE = 2*(Po*NSER*MT*MAX_GAIN)^2;       %New
+ %SCALE = 1;
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH Estimate time stamp at the middle of the data collection period REPLACE_WITH_DASH_DASH-
+dt           = 0.5*NSER*WERA.T_chirp;     % Middle of data in secs
+WERA.TIME(3) = WERA.TIME(3)+dt;           % Add the extra secs
+Time         = datenum([WERA.DATE WERA.TIME]);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%                         Read Data from the File
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+switch upper(WERA.HDCODE)
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%                         Read pointers SPEC2
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+    case{'FMSPC2'}
+        blocks =floor(NCOV/64)+1;
+        PX    = zeros(blocks*64);        % Pre-allocation for speed
+        PY    = PX;
+        for icnt = 1:blocks  
+            list_locs = fread(fid,128,'int32');
+            PX((icnt-1)*64+(1:64)) = list_locs(1:2:128);
+            PY((icnt-1)*64+(1:64)) = list_locs(2:2:128);
+        end
+        data = fread(fid,NCOV*nftl,'float32');
+        fclose(fid);
+        Pxy  = reshape(data,nftl,NCOV);
+        clear data
+        PXY  = cell(NX,NY);
+        for i=1:NCOV                      %blocks*64
+            disp(i)
+            PXY{PX(i),PY(i)}=10*log10(Pxy(:,i)/SCALE);
+        end
+        LAT = LATo;
+        LON = LONo;
+        X   = 0;
+        Y   = 0;
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%                         Read pointers SPEC3
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+    case{'FMSPC3'}
+        blocks = (floor(NCOV/32)+1);
+        PX    = zeros(blocks*32);        % Pre-allocation for speed
+        PY    = PX;
+        LAT   = PX;
+        LON   = PX;
+        for icnt = 1:blocks   
+            list_locs =fread(fid,128,'int32');
+            PX((icnt-1)*32+(1:32))  = list_locs(1:4:128);
+            PY((icnt-1)*32+(1:32))  = list_locs(2:4:128);
+            LAT((icnt-1)*32+(1:32)) = list_locs(3:4:128);
+            LON((icnt-1)*32+(1:32)) = list_locs(4:4:128);
+        end
+        PX   = PX(1:NCOV);
+        PY   = PY(1:NCOV);
+        LAT  = LAT(1:NCOV)*1e-7;
+        LON  = LON(1:NCOV)*1e-7;
+        data = fread(fid,NCOV*nftl,'float32'); 
+        fclose(fid);
+        Pxy  = reshape(data,nftl,NCOV);
+        PXY  = cell(NX,NY);
+        for i = 1:NCOV
+            PXY{PX(i),PY(i)} = 10*log10(Pxy(:,i)/SCALE);
+        end
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH Geographical to orthogonal UTM coordinate transformation REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        if strcmp(GEO,'UTM')==1
+            [X,Y]      = geog2utm(LON,LAT,LONo,LATo);  % Geographic 2 Orthogonal
+            X          = X*1000;                       % Convert from km to m
+            Y          = Y*1000;                       % Convert from km to m
+        else
+            X          = 0;
+            Y          = 0;
+        end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        case {'FUTURE'}
+        % To add future cases/formats
+        fclose(fid);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH        
+    otherwise
+    disp('Header FMSPC2 or FMSPC3 was expected but not found');
+    fclose(fid);
+    return
+end
+end
+
+##### SOURCE END #####
+--></body></html>

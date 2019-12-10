@@ -1,0 +1,1252 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>read_WERA_header</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-09"><meta name="DC.source" content="read_WERA_header.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">read_WERA_header.m</a></li><li><a href="#2">[WERA]=read_WERA_header(head)</a></li><li><a href="#3">Input</a></li><li><a href="#4">Output</a></li><li><a href="#5">Uses</a></li><li><a href="#6">Copyright 2019, George Voulgaris, University of South Carolina</a></li><li><a href="#7">MOodifications</a></li><li><a href="#9">parseheader.m</a></li></ul></div><h2 id="1">read_WERA_header.m</h2><pre class="codeinput"><span class="keyword">function</span> [WERA]=read_WERA_header(head)
+</pre><h2 id="2">[WERA]=read_WERA_header(head)</h2><pre>Function used to parse the header from any WERA file. It is called
+from any function that tries to read any WERA file. All formats have
+been accounted for but not all of them have been tested. The header is
+created by the Fortran science package used in the WERA systems developed
+by Dr. Klaus-Werner Gurgel at the University of Hamburg and commercially
+available by Helzel-Messtechnic GmbH.</pre><h2 id="3">Input</h2><pre>head  = the 512 byte header of the file as a string</pre><h2 id="4">Output</h2><pre>WERA.xxx,  a structure array that xxx contains the variables:
+           TL, NFTL, NX, NY, DGT,RAN_OFF, RAN_OFF_m, N_COVERED, SSR, MT,
+           NTL, DOP_RX_OFF, RAN_RX_OFF, HDCODE, LAT, LON, HDG, NORD</pre><pre>If a file format (stored in WERA.HDCODE) does not contain all variables
+then the structure value is empty at these locations.</pre><pre>NOTE: Currently the function can deal with the following code formats:</pre><pre>FMSOCO, FMSOCN, FMUNSO, FMUNSN, SORT, FMSPC2,  FMSPC3, FMSPEC, FMCALI,
+_MSPEC, FMCASW, FMWRAD and FMRADG</pre><pre>but it has been tested only for
+   FMSOCO (SORT files)
+   FMSOCN (RFI files)
+   FMSPC2 (SPEC files)
+   FMSPC3 (SPEC files)
+   FMWRAD (WRAD files)
+   FMRADG (CRAD files)</pre><h2 id="5">Uses</h2><pre>parseHeaderSORT.m (Internal function)</pre><h2 id="6">Copyright 2019, George Voulgaris, University of South Carolina</h2><p>This file is part of matWERA.</p><p>matWERA is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p><p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p><p>You should have received a copy of the GNU General Public License along with this program.  If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p><p>If you find an error please notify G. Voulgaris at <a href="mailto:gvoulgaris@geol.sc.edu">gvoulgaris@geol.sc.edu</a></p><h2 id="7">MOodifications</h2><pre>    (1) March 13, 2011. reading the header of SPEC, SPEC2 and SPEC3, the
+    correct station coordinates are now assigned to LAT and LON
+    (2) September 10, 2011. the header for SORT and RFI files is
+    completed.
+    (3) September 26, 2018. Some scaling errors were found in checking
+     if VHF for reading SORT files and in the clock units.</pre><p>echo off</p><pre class="codeinput"><span class="comment">%------------------------- Parse the header string ------------------------</span>
+header = parseHeaderSORT(head);
+<span class="comment">% ------------------Start Internal Calculations required ------------------</span>
+<span class="comment">% ---------------------- Parameter Initialization -------------------------</span>
+Mon=[<span class="string">'JAN'</span>;<span class="string">'FEB'</span>;<span class="string">'MAR'</span>;<span class="string">'APR'</span>;<span class="string">'MAY'</span>;<span class="string">'JUN'</span>;<span class="string">'JUL'</span>;<span class="string">'AUG'</span>;<span class="string">'SEP'</span>;<span class="string">'OCT'</span>;<span class="string">'NOV'</span>;<span class="string">'DEC'</span>];
+c_light    = 299.792458;               <span class="comment">% Speed of light</span>
+i_clock_90 = 8;
+i_CHPdwn   = 128;
+WERA.NTL        = [];     WERA.NFTL       = [];    WERA.RATE     = [];
+WERA.NX         = [];     WERA.NY         = [];    WERA.NRRANGES = [];
+WERA.DGT        = [];     WERA.RAN_OFF    = [];    WERA.PHASECOR = [];
+WERA.RAN_OFF_m  = [];     WERA.N_COVERED  = [];
+WERA.SSR        = [];     WERA.MT         = [];
+WERA.NTL        = [];     WERA.DOP_RX_OFF = [];
+WERA.RAN_RX_OFF = [];     WERA.HDCODE     = [];
+WERA.LATo       = [];     WERA.LONo       = [];
+WERA.LATg       = [];     WERA.LONg       = [];
+WERA.HDG        = [];     WERA.NORD       = [];
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">% ------------- Information common for all file types  --------------------</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+HDCODE      = header.code;                       <span class="comment">% Header type</span>
+WERA.HDCODE = HDCODE;
+WERA.FREQ   = str2double(header.freq);           <span class="comment">% Radar Frequency in MHz</span>
+qFREQ       = str2double(header.freq);
+WERA.fbragg = sqrt(9.81*WERA.FREQ/(c_light*pi)); <span class="comment">% Bragg Frequency</span>
+WERA.T_chirp= str2double(header.T_chirp);        <span class="comment">% Chirp duration in sec</span>
+qT_chirp    = WERA.T_chirp;
+fs          = 1./WERA.T_chirp;                   <span class="comment">% Doppler Spec Sampling Frequency</span>
+Last_RC     = str2double(header.nran);           <span class="comment">% No of Range Cells</span>
+WERA.NSER   = str2double(header.nser);           <span class="comment">% Number of samples</span>
+WERA.RHF    = str2double(header.rhf);            <span class="comment">% Range resolution in km</span>
+WERA.NAnt_SORT = str2double(header.ant);         <span class="comment">% No of Antennas in file</span>
+WERA.COMMENTS  = header.comment;
+<span class="comment">%</span>
+<span class="keyword">if</span> ~isempty(header.month) <span class="comment">% empty in RAW file</span>
+    ao=0; mo=0;
+    <span class="keyword">while</span> ao==0
+        mo=mo+1;
+        ao=strcmpi(header.month,Mon(mo,:));
+    <span class="keyword">end</span>
+    WERA.DATE      = [str2double(header.year)+2000,mo,str2double(header.day)];
+    WERA.TIME      = [str2double(header.hh), str2double(header.mm), 0];
+    WERA.TIMEBASE  = header.time_base;
+    WERA.SITE      = header.site_name;
+<span class="keyword">end</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">switch</span> upper(HDCODE)
+
+    <span class="keyword">case</span> {<span class="string">'FMSPEC'</span>,<span class="string">'FMSPC2'</span>,<span class="string">'FMSPC3'</span>,<span class="string">'FMRADG'</span>,<span class="string">'FMWRAD'</span>}   <span class="comment">% All gridded data files</span>
+          disp([<span class="string">'Header is '</span>,HDCODE])                     <span class="comment">% Specs, CRads and WRAds</span>
+          WERA.HDCODE= HDCODE;
+          WERA.NTL   = str2double(header.ntl);
+          WERA.NFTL  = str2double(header.nftl);
+          WERA.NX    = str2double(header.nx);
+          WERA.NY    = str2double(header.ny);
+          RAN_OFF    = str2double(header.ran_off);        <span class="comment">% Range cell offset</span>
+          RAN_OFF_m  = RAN_OFF *WERA.RHF*1000.0;
+	      I_100      = round(0.02*WERA.RAN_OFF_m)*50;
+	      WERA.RAN_OFF    = I_100/(WERA.RHF*1000);
+	      WERA.RAN_OFF_m  = RAN_OFF*WERA.RHF*1000.0d0;    <span class="comment">% Range offset in meters</span>
+          WERA.N_COVERED  = str2double(header.n_covered);
+          WERA.LATo  = str2double(header.lat);
+          WERA.LONo  = str2double(header.lon);
+          WERA.NORD  = str2double(header.nord);
+          WERA.LATg  = str2double(header.lat_grid);
+          WERA.LONg  = str2double(header.lon_grid);
+          WERA.DGT   = str2double(header.dgt);
+
+<span class="comment">%     case {'FMRADG','FMWRAD'}   % Gridded Radial and Wave files</span>
+<span class="comment">%           disp(['Header is ',HDCODE])</span>
+<span class="comment">%           WERA.HDCODE= HDCODE;</span>
+<span class="comment">%           WERA.NTL   = str2double(header.ntl);</span>
+<span class="comment">%           WERA.NFTL  = str2double(header.nftl);</span>
+<span class="comment">%           WERA.NX    = str2double(header.nx);</span>
+<span class="comment">%           WERA.NY    = str2double(header.ny);</span>
+<span class="comment">%           RAN_OFF    = str2double(header.ran_off);      % Range cell offset</span>
+<span class="comment">%           RAN_OFF_m  = RAN_OFF *WERA.RHF*1000.0;</span>
+<span class="comment">% 	        I_100      = round(0.02*RAN_OFF_m)*50;</span>
+<span class="comment">% 	        WERA.RAN_OFF    = I_100/(WERA.RHF*1000);</span>
+<span class="comment">% 	        WERA.RAN_OFF_m  = RAN_OFF*WERA.RHF*1000.0d0;   % Range offset in meters</span>
+<span class="comment">%           WERA.N_COVERED  = str2double(header.n_covered);</span>
+<span class="comment">%           WERA.LATo  = str2double(header.lat);</span>
+<span class="comment">%           WERA.LONo  = str2double(header.lon);</span>
+<span class="comment">%           WERA.NORD  = str2double(header.nord);</span>
+<span class="comment">%           WERA.DGT   = str2double(header.dgt);</span>
+
+    <span class="keyword">case</span> {<span class="string">'FMSOCO'</span>,<span class="string">'FMSOCN'</span>}           <span class="comment">% SORT &amp; RFI Files case</span>
+<span class="comment">%           disp(['Header is ',HDCODE])</span>
+          WERA.SAMPZ  = str2double(header.nser);
+          WERA.HDCODE = HDCODE;
+          WERA.SSR    = str2double(header.ss);         <span class="comment">% seconds</span>
+          WERA.MT     = str2double(header.mt);         <span class="comment">% samples</span>
+          WERA.NTL    = str2double(header.ntl);
+          RAN_OFF     = str2double(header.ran_off);    <span class="comment">% Range cell offset</span>
+          RAN_OFF_m   = RAN_OFF *WERA.RHF*1000.0;
+	      I_100       = round(0.02*RAN_OFF_m)*50;
+	      WERA.RAN_OFF   = I_100/(WERA.RHF*1000);
+	      WERA.RAN_OFF_m = RAN_OFF*WERA.RHF*1000.0d0;  <span class="comment">% Range offset in meters</span>
+	      RXOFFSET    = str2double(header.rxoffset);
+          WERA.PHASECOR = str2double(header.phase_cor);<span class="comment">% Phase correction for each ant</span>
+          WERA.LAT    = str2double(header.lat);
+          WERA.LON    = str2double(header.lon);
+          WERA.NORD   = str2double(header.nord);
+          WERA.PWR    = str2double(header.power);
+          WERA.RATE   = str2double(header.rate);
+          WERA.NRRANGES = str2double(header.nrranges);
+          mode        = str2double(header.mode);
+          binar       = <span class="string">'000000000000'</span>;
+          binar1      = dec2bin(hex2dec(header.mode));
+          nnn         = length(binar1);
+          <span class="keyword">for</span> i=12:-1:12-nnn+1
+              binar(i)=binar1(12-i+1);
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(11)==<span class="string">'0'</span>
+              WERA.mes(2,:)=<span class="string">'Line power for power amplifier is switched OFF'</span>;
+          <span class="keyword">else</span>
+              WERA.mes(2,:)=<span class="string">'Line power for power amplifier is switched ON '</span>;
+          <span class="keyword">end</span>
+          <span class="keyword">if</span> binar(10)==<span class="string">'0'</span>
+              WERA.mes(2,:)=<span class="string">'Internal calibration mode is switched OFF     '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(2,:)=<span class="string">'Internal calibration mode is switched ON      '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(9)==<span class="string">'0'</span>
+              WERA.mes(3,:)=<span class="string">'IfM internal use (jitter)                     '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(3,:)=<span class="string">'IfM internal use (jitter)                     '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(8)==<span class="string">'0'</span>
+              WERA.mes(4,:)=<span class="string">'90.742153846154 MHz system clock              '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(4,:)=<span class="string">'90.000000000000 Mhz system clock              '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(7)==<span class="string">'0'</span>
+              WERA.mes(5,:)=<span class="string">'Leave RX DDS at DC                            '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(5,:)=<span class="string">'Set RX DDS to WERA working frequency          '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(6)==<span class="string">'0'</span>
+              WERA.mes(6,:)=<span class="string">'IfM internal use (LAH)                        '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(6,:)=<span class="string">'IfM internal use (LAH)                        '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(5)==<span class="string">'0'</span>
+              WERA.mes(7,:)=<span class="string">'Master (chirp up)                             '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(7,:)=<span class="string">'Slave (chirp down)                            '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(2)==<span class="string">'0'</span>
+              WERA.mes(10,:)=<span class="string">'Disable FMICW                                 '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(10,:)=<span class="string">'Enable FMICW                                  '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(3)==<span class="string">'0'</span>
+              <span class="keyword">if</span> binar(4)==<span class="string">'0'</span>
+                  WERA.mes(9,:)=<span class="string">'FMICW sequence #0                             '</span>;
+              <span class="keyword">else</span>
+                  WERA.mes(9,:)=<span class="string">'FMICW sequence #1                             '</span>;
+              <span class="keyword">end</span>
+          <span class="keyword">else</span>
+              <span class="keyword">if</span> binar(4)==<span class="string">'1'</span>
+                  WERA.mes(9,:)=<span class="string">'FMICW sequence #2                             '</span>;
+              <span class="keyword">else</span>
+                  WERA.mes(9,:)=<span class="string">'FMICW sequence #3                             '</span>;
+              <span class="keyword">end</span>
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(1)==<span class="string">'0'</span>
+              WERA.mes(11,:)=<span class="string">'Chirps up or down                             '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(11,:)=<span class="string">'Triangular Chirps                             '</span>;
+          <span class="keyword">end</span>
+
+          <span class="comment">%  Check system slave mode</span>
+          CL = bitand(uint8(mode),uint8(i_CHPdwn));
+          <span class="keyword">if</span> (CL==i_CHPdwn)
+              RXOFFSET = -1 * RXOFFSET;   <span class="comment">% System in Slave mode</span>
+          <span class="keyword">end</span>
+          <span class="comment">%   Check system clock</span>
+          CL = bitand(uint8(mode),uint8(i_clock_90));
+          <span class="keyword">if</span> (CL==i_clock_90)
+              Fclk = 10^6*180.0;
+	          Divc = 4.0 * 7618.0;
+          <span class="keyword">else</span>
+              Fclk = 10^6*181.48430768;
+	          Divc = 4.0 * 7680.0;
+          <span class="keyword">end</span>
+          WERA.RXOFFSET = RXOFFSET;
+          ADCclk   =  Fclk/Divc;			         <span class="comment">% calculate ADC clock</span>
+          Tc_exact = str2double(header.mt)/ADCclk;   <span class="comment">% calculate exact chirp length</span>
+          <span class="comment">%</span>
+          <span class="keyword">if</span> (abs((Tc_exact-qT_chirp)) &gt; 0.01*WERA.T_chirp)   <span class="comment">% Check if VHF mode</span>
+              ADCclk       = 2* ADCclk;
+              Tc_exact     = str2double(header.mt)/ADCclk;
+              VHF_Sampling = true;
+          <span class="keyword">end</span>
+          WERA.T_chirp  = Tc_exact;
+          qT_chirp      = Tc_exact;
+         <span class="comment">% ------------</span>
+              DOP_RX_OFF = RXOFFSET*Fclk/(2^48);
+	          RAN_RX_OFF = 0.0;
+              <span class="keyword">if</span> (DOP_RX_OFF &gt; 0.0)
+                  <span class="keyword">while</span> (DOP_RX_OFF &gt; 0.5*Tc_exact)
+                      RAN_RX_OFF = RAN_RX_OFF + 1;
+                      DOP_RX_OFF = DOP_RX_OFF - 1/Tc_exact;
+                  <span class="keyword">end</span>
+
+              <span class="keyword">else</span>
+                  <span class="keyword">while</span> (DOP_RX_OFF &lt; -0.5*Tc_exact)
+                      RAN_RX_OFF = RAN_RX_OFF - 1;
+                      DOP_RX_OFF = DOP_RX_OFF + 1/Tc_exact;
+                  <span class="keyword">end</span>
+              <span class="keyword">end</span>
+          WERA.DOP_RX_OFF=DOP_RX_OFF;
+          WERA.RAN_RX_OFF=RAN_RX_OFF;
+
+      <span class="keyword">case</span> {<span class="string">'FMCASW'</span>,<span class="string">'FMCALI'</span>}           <span class="comment">% RAW &amp; CAL Files case</span>
+<span class="comment">%           disp(['Header is ',HDCODE])</span>
+          WERA.SAMPZ  = str2double(header.nser);
+          WERA.HDCODE = HDCODE;
+          WERA.SSR    = str2double(header.ss);        <span class="comment">% seconds</span>
+          WERA.MT     = str2double(header.mt);        <span class="comment">% samples</span>
+          WERA.NTL    = str2double(header.ntl);
+          RAN_OFF     = str2double(header.ran_off);   <span class="comment">% Range cell offset</span>
+          RAN_OFF_m   = RAN_OFF *WERA.RHF*1000.0;
+	      I_100       = round(0.02*RAN_OFF_m)*50;
+	      WERA.RAN_OFF   = I_100/(WERA.RHF*1000);
+	      WERA.RAN_OFF_m = RAN_OFF*WERA.RHF*1000.0d0; <span class="comment">% Range offset in meters</span>
+	      RXOFFSET    = str2double(header.rxoffset);
+          WERA.PHASECOR = str2num(header.phase_cor);  <span class="comment">% Phase correction for each ant</span>
+          WERA.LAT  = str2double(header.lat);
+          WERA.LON  = str2double(header.lon);
+          WERA.NORD = str2double(header.nord);
+          WERA.PWR  = str2double(header.power);
+          WERA.RATE = str2double(header.rate);
+          WERA.NRRANGES = str2double(header.nrranges);
+          mode        = str2double(header.mode);
+          binar       = <span class="string">'000000000000'</span>;
+          binar1      = dec2bin(hex2dec(header.mode));
+          nnn         = length(binar1);
+          <span class="keyword">for</span> i=12:-1:12-nnn+1
+              binar(i)=binar1(12-i+1);
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(11)==<span class="string">'0'</span>
+              WERA.mes(2,:)=<span class="string">'Line power for power amplifier is switched OFF'</span>;
+          <span class="keyword">else</span>
+              WERA.mes(2,:)=<span class="string">'Line power for power amplifier is switched ON '</span>;
+          <span class="keyword">end</span>
+          <span class="keyword">if</span> binar(10)==<span class="string">'0'</span>
+              WERA.mes(2,:)=<span class="string">'Internal calibration mode is switched OFF     '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(2,:)=<span class="string">'Internal calibration mode is switched ON      '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(9)==<span class="string">'0'</span>
+              WERA.mes(3,:)=<span class="string">'IfM internal use (jitter)                     '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(3,:)=<span class="string">'IfM internal use (jitter)                     '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(8)==<span class="string">'0'</span>
+              WERA.mes(4,:)=<span class="string">'90.742153846154 MHz system clock              '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(4,:)=<span class="string">'90.000000000000 Mhz system clock              '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(7)==<span class="string">'0'</span>
+              WERA.mes(5,:)=<span class="string">'Leave RX DDS at DC                            '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(5,:)=<span class="string">'Set RX DDS to WERA working frequency          '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(6)==<span class="string">'0'</span>
+              WERA.mes(6,:)=<span class="string">'IfM internal use (LAH)                        '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(6,:)=<span class="string">'IfM internal use (LAH)                        '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(5)==<span class="string">'0'</span>
+              WERA.mes(7,:)=<span class="string">'Master (chirp up)                             '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(7,:)=<span class="string">'Slave (chirp down)                            '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(2)==<span class="string">'0'</span>
+              WERA.mes(10,:)=<span class="string">'Disable FMICW                                 '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(10,:)=<span class="string">'Enable FMICW                                  '</span>;
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(3)==<span class="string">'0'</span>
+              <span class="keyword">if</span> binar(4)==<span class="string">'0'</span>
+                  WERA.mes(9,:)=<span class="string">'FMICW sequence #0                             '</span>;
+              <span class="keyword">else</span>
+                  WERA.mes(9,:)=<span class="string">'FMICW sequence #1                             '</span>;
+              <span class="keyword">end</span>
+          <span class="keyword">else</span>
+              <span class="keyword">if</span> binar(4)==<span class="string">'1'</span>
+                  WERA.mes(9,:)=<span class="string">'FMICW sequence #2                             '</span>;
+              <span class="keyword">else</span>
+                  WERA.mes(9,:)=<span class="string">'FMICW sequence #3                             '</span>;
+              <span class="keyword">end</span>
+          <span class="keyword">end</span>
+
+          <span class="keyword">if</span> binar(1)==<span class="string">'0'</span>
+              WERA.mes(11,:)=<span class="string">'Chirps up or down                             '</span>;
+          <span class="keyword">else</span>
+              WERA.mes(11,:)=<span class="string">'Triangular Chirps                             '</span>;
+          <span class="keyword">end</span>
+
+          <span class="comment">%  Check system slave mode</span>
+          CL = bitand(uint8(mode),uint8(i_CHPdwn));
+          <span class="keyword">if</span> (CL==i_CHPdwn)
+              RXOFFSET = -1 * RXOFFSET;   <span class="comment">% System in Slave mode</span>
+          <span class="keyword">end</span>
+          <span class="comment">%   Check system clock</span>
+          CL = bitand(uint8(mode),uint8(i_clock_90));
+          <span class="keyword">if</span> (CL==i_clock_90)
+              Fclk = 10^6*180.0;
+	          Divc = 4.0 * 7618.0;
+          <span class="keyword">else</span>
+              Fclk = 10^6*181.48430768;
+	          Divc = 4.0 * 7680.0;
+          <span class="keyword">end</span>
+          WERA.RXOFFSET = RXOFFSET;
+          ADCclk   =  Fclk/Divc;			         <span class="comment">% calculate ADC clock</span>
+          Tc_exact = str2double(header.mt)/ADCclk;      <span class="comment">% calculate exact chirp length</span>
+          <span class="comment">%</span>
+          WERA.T_chirp_or  = WERA.T_chirp;
+          <span class="keyword">if</span> (abs((Tc_exact-qT_chirp)) &gt; 0.01*WERA.T_chirp)   <span class="comment">% Check if VHF mode</span>
+              ADCclk       = 2* ADCclk;
+              Tc_exact     = str2double(header.mt)/ADCclk;
+              VHF_Sampling = true;
+          <span class="keyword">end</span>
+          WERA.T_chirp  = Tc_exact;
+          qT_chirp      = Tc_exact;
+         <span class="comment">% ------------</span>
+              DOP_RX_OFF = RXOFFSET*Fclk/(2^48);
+	          RAN_RX_OFF = 0.0;
+              <span class="keyword">if</span> (DOP_RX_OFF &gt; 0.0)
+                  <span class="keyword">while</span> (DOP_RX_OFF &gt; 0.5*Tc_exact)
+                      RAN_RX_OFF = RAN_RX_OFF + 1;
+                      DOP_RX_OFF = DOP_RX_OFF - 1/Tc_exact;
+                  <span class="keyword">end</span>
+              <span class="keyword">else</span>
+                  <span class="keyword">while</span> (DOP_RX_OFF &lt; -0.5*Tc_exact)
+                      RAN_RX_OFF = RAN_RX_OFF - 1;
+                      DOP_RX_OFF = DOP_RX_OFF + 1/Tc_exact;
+                  <span class="keyword">end</span>
+              <span class="keyword">end</span>
+          WERA.DOP_RX_OFF=DOP_RX_OFF;
+          WERA.RAN_RX_OFF=RAN_RX_OFF;
+     <span class="keyword">otherwise</span>
+          disp([<span class="string">'Header is '</span>,HDCODE,<span class="string">' which is not programmed yet'</span>])
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+<span class="comment">%</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+</pre><h2 id="9">parseheader.m</h2><pre class="codeinput"><span class="keyword">function</span> header=parseHeaderSORT(head0)
+<span class="comment">%</span>
+<span class="comment">%  Function that reads the header of a WERA file and parses it into a</span>
+<span class="comment">%  structure called header that contains on information as a string</span>
+<span class="comment">%  character. The Format CODE of the file is stored in the header.code</span>
+<span class="comment">%  variable. It covers the following code formats:</span>
+<span class="comment">%      FMSOCO, FMSOCN, FMUNSO, FMUNSN,   SORT, FMSPC2</span>
+<span class="comment">%      FMSPC3, FMSPEC, FMCALI, _MSPEC, FMCASW, FMWRAD and FMRADG</span>
+<span class="comment">%  but it has been tested only for</span>
+<span class="comment">%   FMSOCO (SORT files)</span>
+<span class="comment">%   FMSOCN (RFI files)</span>
+<span class="comment">%   FMSPC2 (SPEC files)</span>
+<span class="comment">%   FMWRAD (WRAD files)</span>
+<span class="comment">%   FMRADG (CRAD files)</span>
+<span class="comment">%   FMCASW (RAW files) no tested  the SCAN files have info further below the</span>
+<span class="comment">%  comments</span>
+<span class="comment">%</span>
+CDE= [<span class="string">'FMSOCO'</span>; <span class="string">'FMSOCN'</span>; <span class="string">'FMUNSO'</span>; <span class="string">'FMUNSN'</span>; <span class="string">'  SORT'</span>; <span class="string">'FMSPC2'</span>; <span class="string">'FMSPC3'</span>;
+      <span class="string">'FMSPEC'</span>; <span class="string">'FMCALI'</span>; <span class="string">'_MSPEC'</span>; <span class="string">'FMCASW'</span>; <span class="string">'FMRADG'</span>; <span class="string">'FMWRAD'</span>];
+<span class="comment">%</span>
+N = size(head0,1);
+<span class="keyword">if</span> N~=1
+    head0=head0';
+<span class="keyword">end</span>
+<span class="comment">%</span>
+head = char(head0);
+ix   = strfind(head,<span class="string">'SAMPLES'</span>);
+<span class="keyword">if</span> isempty(ix)==0
+    header.nser = head(1:ix-2);
+<span class="keyword">else</span>
+    header.nser =-999;
+<span class="keyword">end</span>
+<span class="comment">%-----------------DECODE HEADER CODE -------------------------------------</span>
+header.code      = head(49:54);
+<span class="keyword">if</span> ( strcmp(header.code,CDE(1,:))==1 || strcmp(header.code,CDE(2,:))==1 || strcmp(header.code,CDE(3,:))==1 <span class="keyword">...</span>
+  || strcmp(header.code,CDE(4,:))==1 || strcmp(header.code,CDE(9,:))==1 || strcmp(header.code,CDE(10,:))==1 <span class="keyword">...</span>
+  || strcmp(header.code,CDE(11,:))==1)
+      header.ant  = head(224:225);
+<span class="keyword">elseif</span> strcmp(header.code,CDE(5,:))==1
+      header.ant = <span class="string">'4'</span>;      <span class="comment">% direction finding sort data;</span>
+<span class="keyword">else</span>
+      header.ant = <span class="string">'999'</span>;
+<span class="keyword">end</span>
+<span class="comment">%------------------------------------------------------------------------</span>
+<span class="keyword">if</span> strcmp(header.code, CDE(11,:))==1     <span class="comment">% FMCASW</span>
+      header.year  = <span class="string">''</span>;
+      header.day   = <span class="string">''</span>;
+      header.month = <span class="string">''</span>;
+      header.hh    = <span class="string">''</span>;
+      header.mm    = <span class="string">''</span>;
+  header.time_base = <span class="string">''</span>;
+  header.site_name = <span class="string">''</span>;
+      header.freq  = <span class="string">''</span>;
+      header.rhf   = <span class="string">''</span>;
+      header.nord  = <span class="string">''</span>;
+    header.T_chirp = <span class="string">''</span>;
+<span class="keyword">else</span>
+      header.year  = head(23:24);
+      header.day   = head(16:17);
+      header.month = head(19:21);
+      header.hh    = head(26:27);
+      header.mm    = head(29:31);
+  header.time_base = head(32:34);
+  header.site_name = head(37:48);
+      header.freq  = head(65:71);
+      <span class="keyword">if</span> strcmp(head(90:94),<span class="string">'RANGE'</span>)==1
+        header.rhf  = head(97:103);
+      <span class="keyword">else</span>
+        header.rhf  = num2str(str2double(head(101:102))*0.15*8);
+      <span class="keyword">end</span>
+    header.nord = head(118:120);
+ header.T_chirp = head(132:139);
+<span class="keyword">end</span>
+
+header.nran        = head(151:153);
+header.lon_grad    = head(170:172);
+header.lon_min     = head(174:175);
+header.lon_sec     = head(177:178);
+header.east_or_west= head(180);
+header.lat_grad    = head(188:190);
+header.lat_min     = head(192:193);
+header.lat_sec     = head(195:196);
+header.north_or_south = head(198);
+lat = str2double(header.lat_grad)+str2double(header.lat_min)/60+str2double(header.lat_sec)/60/60;
+<span class="keyword">if</span> strcmp(header.north_or_south,<span class="string">'S'</span>)==1
+    header.lat=num2str(-lat);
+<span class="keyword">else</span>
+    header.lat=num2str(lat);
+<span class="keyword">end</span>
+lon = str2double(header.lon_grad)+str2double(header.lon_min)/60+str2double(header.lon_sec)/60/60;
+<span class="keyword">if</span> strcmp(header.east_or_west,<span class="string">'W'</span>)==1
+    header.lon=num2str(-lon);
+<span class="keyword">else</span>
+    header.lon=num2str(lon);
+<span class="keyword">end</span>
+<span class="comment">%</span>
+<span class="keyword">if</span> strcmp(head(200:202),<span class="string">'MT:'</span>)==1
+	header.mt = head(203:208);
+<span class="keyword">else</span>
+	header.mt = num2str(768 * 2);
+<span class="keyword">end</span>
+
+header.power = head(215:218);
+
+<span class="keyword">if</span> strcmp(head(239),<span class="string">'T'</span>)==0
+     header.ran_off = head(239:244);
+<span class="keyword">elseif</span> head(240)~=<span class="string">':'</span>
+     header.ran_off = head(240:244);
+<span class="keyword">else</span>
+     header.ran_off = head(241:244);
+<span class="keyword">end</span>
+
+header.rxoffset    = head(254:263);
+
+<span class="keyword">if</span> strcmp(head(264:265),<span class="string">'SS'</span>)==1 || strcmp(head(264:265),<span class="string">'ss'</span>)==1
+     header.ss = head(267:274);
+<span class="keyword">else</span>
+     header.ss = <span class="string">'0.0'</span>;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> (strcmp(header.code, CDE(1,:))==1 || strcmp(header.code, CDE(2,:))==1 || strcmp(header.code, CDE(3,:))==1 <span class="keyword">...</span>
+  || strcmp(header.code, CDE(4,:))==1 || strcmp(header.code, CDE(9,:))==1 || strcmp(header.code, CDE(10,:))==1 <span class="keyword">...</span>
+  || strcmp(header.code, CDE(11,:))==1  )
+   <span class="keyword">if</span> strcmp(head(227:229),<span class="string">'MD:'</span>)==1
+         header.mode = head(230:232);
+   <span class="keyword">else</span>
+         header.mode = <span class="string">''</span>;
+   <span class="keyword">end</span>
+    <span class="comment">%</span>
+   <span class="keyword">if</span> strcmp(head(245:253),<span class="string">'RXOFFSET:'</span>)==1
+         header.rxoffset = head(254:263);
+   <span class="keyword">else</span>
+         header.rxoffset = <span class="string">'0.0'</span>;
+   <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> (strcmp(header.code, CDE(6,:))==1 || strcmp(header.code, CDE(7,:))==1  || strcmp(header.code, CDE(8,:))==1 <span class="keyword">...</span>
+  || strcmp(header.code, CDE(1,:))==1 || strcmp(header.code, CDE(2,:))==1  || strcmp(header.code, CDE(12,:))==1 <span class="keyword">...</span>
+  || strcmp(header.code, CDE(13,:))==1 )
+
+   <span class="keyword">if</span> strcmp(head(201:203),<span class="string">'NTL'</span>)==1
+        header.ntl = head(205:208);
+   <span class="keyword">else</span>
+        header.ntl = <span class="string">'13'</span>;
+   <span class="keyword">end</span>
+
+   <span class="keyword">if</span> strcmp(head(210:213),<span class="string">'NFTL'</span>)==1
+         header.nftl = head(215:218);
+   <span class="keyword">else</span>
+         header.nftl = <span class="string">'512'</span>;
+   <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> (strcmp(header.code, CDE(6,:))==1  || strcmp(header.code, CDE(7,:))==1 || strcmp(header.code, CDE(8,:))==1 || <span class="keyword">...</span>
+    strcmp(header.code, CDE(12,:))==1 || strcmp(header.code, CDE(13,:))==1 )
+    header.nx   = head(223:225);
+    header.ny   = head(230:232);
+    header.lat_grid  = head(384+(86:95));
+    header.lon_grid  = head(384+(101:111));
+    header.dgt       = head(384+(117:127));
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> (strcmp(header.code, CDE(1,:))==1  || strcmp(header.code, CDE(2,:))==1)
+      phase_cor = head(384+(1:128));
+      header.phase_cor = reshape(phase_cor,8,16)';
+      header.rate      =head(132:139);
+      header.nrranges  =head(151:153);
+<span class="keyword">end</span>
+<span class="keyword">if</span> ((strcmp(header.code, CDE(6,:))==1  || strcmp(header.code, CDE(7,:))==1 || strcmp(header.code, CDE(12,:))==1 || <span class="keyword">...</span>
+     strcmp(header.code, CDE(13,:))==1) &amp;&amp; strcmp(head(384+(65:69)),<span class="string">'NCOV '</span>) == 1)
+      header.n_covered = head(384+(70:79));
+<span class="keyword">else</span>
+      header.n_covered=<span class="string">''</span>;
+<span class="keyword">end</span>
+ header.hd          = head(279:281);
+ header.comment     = head(283:384);
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% read_WERA_header.m
+function [WERA]=read_WERA_header(head)
+%% [WERA]=read_WERA_header(head)
+%  
+%  Function used to parse the header from any WERA file. It is called
+%  from any function that tries to read any WERA file. All formats have
+%  been accounted for but not all of them have been tested. The header is
+%  created by the Fortran science package used in the WERA systems developed 
+%  by Dr. Klaus-Werner Gurgel at the University of Hamburg and commercially 
+%  available by Helzel-Messtechnic GmbH.
+%
+%% Input  
+%  head  = the 512 byte header of the file as a string 
+%      
+%% Output  
+%  WERA.xxx,  a structure array that xxx contains the variables:
+%             TL, NFTL, NX, NY, DGT,RAN_OFF, RAN_OFF_m, N_COVERED, SSR, MT,
+%             NTL, DOP_RX_OFF, RAN_RX_OFF, HDCODE, LAT, LON, HDG, NORD
+%
+%  If a file format (stored in WERA.HDCODE) does not contain all variables
+%  then the structure value is empty at these locations.
+%
+%  NOTE: Currently the function can deal with the following code formats:
+%
+%  FMSOCO, FMSOCN, FMUNSO, FMUNSN, SORT, FMSPC2,  FMSPC3, FMSPEC, FMCALI, 
+%  _MSPEC, FMCASW, FMWRAD and FMRADG
+%  
+%  but it has been tested only for
+%     FMSOCO (SORT files) 
+%     FMSOCN (RFI files)
+%     FMSPC2 (SPEC files)
+%     FMSPC3 (SPEC files)
+%     FMWRAD (WRAD files)
+%     FMRADG (CRAD files)
+%
+%% Uses
+%  parseHeaderSORT.m (Internal function)
+% 
+%% Copyright 2019, George Voulgaris, University of South Carolina
+%
+% This file is part of matWERA.
+%
+% matWERA is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+%
+% If you find an error please notify G. Voulgaris at gvoulgaris@geol.sc.edu
+%
+%% MOodifications
+%
+%      (1) March 13, 2011. reading the header of SPEC, SPEC2 and SPEC3, the
+%      correct station coordinates are now assigned to LAT and LON
+%      (2) September 10, 2011. the header for SORT and RFI files is
+%      completed.
+%      (3) September 26, 2018. Some scaling errors were found in checking
+%       if VHF for reading SORT files and in the clock units.
+%
+% echo off
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- Parse the header string REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+header = parseHeaderSORT(head);
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHStart Internal Calculations required REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH Parameter Initialization REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+Mon=['JAN';'FEB';'MAR';'APR';'MAY';'JUN';'JUL';'AUG';'SEP';'OCT';'NOV';'DEC'];
+c_light    = 299.792458;               % Speed of light
+i_clock_90 = 8;
+i_CHPdwn   = 128;
+WERA.NTL        = [];     WERA.NFTL       = [];    WERA.RATE     = [];
+WERA.NX         = [];     WERA.NY         = [];    WERA.NRRANGES = [];
+WERA.DGT        = [];     WERA.RAN_OFF    = [];    WERA.PHASECOR = [];
+WERA.RAN_OFF_m  = [];     WERA.N_COVERED  = [];
+WERA.SSR        = [];     WERA.MT         = [];
+WERA.NTL        = [];     WERA.DOP_RX_OFF = [];
+WERA.RAN_RX_OFF = [];     WERA.HDCODE     = [];
+WERA.LATo       = [];     WERA.LONo       = [];
+WERA.LATg       = [];     WERA.LONg       = [];
+WERA.HDG        = [];     WERA.NORD       = [];
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- Information common for all file types  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH     
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+HDCODE      = header.code;                       % Header type
+WERA.HDCODE = HDCODE;
+WERA.FREQ   = str2double(header.freq);           % Radar Frequency in MHz
+qFREQ       = str2double(header.freq);
+WERA.fbragg = sqrt(9.81*WERA.FREQ/(c_light*pi)); % Bragg Frequency
+WERA.T_chirp= str2double(header.T_chirp);        % Chirp duration in sec
+qT_chirp    = WERA.T_chirp;
+fs          = 1./WERA.T_chirp;                   % Doppler Spec Sampling Frequency
+Last_RC     = str2double(header.nran);           % No of Range Cells
+WERA.NSER   = str2double(header.nser);           % Number of samples
+WERA.RHF    = str2double(header.rhf);            % Range resolution in km 
+WERA.NAnt_SORT = str2double(header.ant);         % No of Antennas in file
+WERA.COMMENTS  = header.comment;
+%
+if ~isempty(header.month) % empty in RAW file
+    ao=0; mo=0;
+    while ao==0
+        mo=mo+1;
+        ao=strcmpi(header.month,Mon(mo,:));
+    end
+    WERA.DATE      = [str2double(header.year)+2000,mo,str2double(header.day)];
+    WERA.TIME      = [str2double(header.hh), str2double(header.mm), 0];
+    WERA.TIMEBASE  = header.time_base;
+    WERA.SITE      = header.site_name;
+end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+switch upper(HDCODE)
+
+    case {'FMSPEC','FMSPC2','FMSPC3','FMRADG','FMWRAD'}   % All gridded data files
+          disp(['Header is ',HDCODE])                     % Specs, CRads and WRAds
+          WERA.HDCODE= HDCODE;
+          WERA.NTL   = str2double(header.ntl);
+          WERA.NFTL  = str2double(header.nftl);
+          WERA.NX    = str2double(header.nx);
+          WERA.NY    = str2double(header.ny);
+          RAN_OFF    = str2double(header.ran_off);        % Range cell offset
+          RAN_OFF_m  = RAN_OFF *WERA.RHF*1000.0;
+	      I_100      = round(0.02*WERA.RAN_OFF_m)*50;
+	      WERA.RAN_OFF    = I_100/(WERA.RHF*1000);
+	      WERA.RAN_OFF_m  = RAN_OFF*WERA.RHF*1000.0d0;    % Range offset in meters
+          WERA.N_COVERED  = str2double(header.n_covered);
+          WERA.LATo  = str2double(header.lat);
+          WERA.LONo  = str2double(header.lon);
+          WERA.NORD  = str2double(header.nord);
+          WERA.LATg  = str2double(header.lat_grid);
+          WERA.LONg  = str2double(header.lon_grid);
+          WERA.DGT   = str2double(header.dgt);
+
+%     case {'FMRADG','FMWRAD'}   % Gridded Radial and Wave files
+%           disp(['Header is ',HDCODE])
+%           WERA.HDCODE= HDCODE;
+%           WERA.NTL   = str2double(header.ntl);
+%           WERA.NFTL  = str2double(header.nftl);
+%           WERA.NX    = str2double(header.nx);
+%           WERA.NY    = str2double(header.ny);
+%           RAN_OFF    = str2double(header.ran_off);      % Range cell offset
+%           RAN_OFF_m  = RAN_OFF *WERA.RHF*1000.0;
+% 	        I_100      = round(0.02*RAN_OFF_m)*50;
+% 	        WERA.RAN_OFF    = I_100/(WERA.RHF*1000);
+% 	        WERA.RAN_OFF_m  = RAN_OFF*WERA.RHF*1000.0d0;   % Range offset in meters
+%           WERA.N_COVERED  = str2double(header.n_covered);
+%           WERA.LATo  = str2double(header.lat);
+%           WERA.LONo  = str2double(header.lon);
+%           WERA.NORD  = str2double(header.nord);
+%           WERA.DGT   = str2double(header.dgt);
+
+    case {'FMSOCO','FMSOCN'}           % SORT & RFI Files case
+%           disp(['Header is ',HDCODE])
+          WERA.SAMPZ  = str2double(header.nser);
+          WERA.HDCODE = HDCODE;
+          WERA.SSR    = str2double(header.ss);         % seconds
+          WERA.MT     = str2double(header.mt);         % samples
+          WERA.NTL    = str2double(header.ntl);
+          RAN_OFF     = str2double(header.ran_off);    % Range cell offset
+          RAN_OFF_m   = RAN_OFF *WERA.RHF*1000.0;
+	      I_100       = round(0.02*RAN_OFF_m)*50;
+	      WERA.RAN_OFF   = I_100/(WERA.RHF*1000);
+	      WERA.RAN_OFF_m = RAN_OFF*WERA.RHF*1000.0d0;  % Range offset in meters
+	      RXOFFSET    = str2double(header.rxoffset);
+          WERA.PHASECOR = str2double(header.phase_cor);% Phase correction for each ant
+          WERA.LAT    = str2double(header.lat);
+          WERA.LON    = str2double(header.lon);
+          WERA.NORD   = str2double(header.nord);
+          WERA.PWR    = str2double(header.power);
+          WERA.RATE   = str2double(header.rate);
+          WERA.NRRANGES = str2double(header.nrranges);
+          mode        = str2double(header.mode);
+          binar       = '000000000000';
+          binar1      = dec2bin(hex2dec(header.mode));
+          nnn         = length(binar1);
+          for i=12:-1:12-nnn+1
+              binar(i)=binar1(12-i+1);
+          end
+       
+          if binar(11)=='0'
+              WERA.mes(2,:)='Line power for power amplifier is switched OFF';
+          else
+              WERA.mes(2,:)='Line power for power amplifier is switched ON ';
+          end
+          if binar(10)=='0'
+              WERA.mes(2,:)='Internal calibration mode is switched OFF     ';
+          else
+              WERA.mes(2,:)='Internal calibration mode is switched ON      ';
+          end
+          
+          if binar(9)=='0'
+              WERA.mes(3,:)='IfM internal use (jitter)                     ';
+          else
+              WERA.mes(3,:)='IfM internal use (jitter)                     ';
+          end
+          
+          if binar(8)=='0'
+              WERA.mes(4,:)='90.742153846154 MHz system clock              ';
+          else
+              WERA.mes(4,:)='90.000000000000 Mhz system clock              ';
+          end
+          
+          if binar(7)=='0'
+              WERA.mes(5,:)='Leave RX DDS at DC                            ';
+          else
+              WERA.mes(5,:)='Set RX DDS to WERA working frequency          ';
+          end
+          
+          if binar(6)=='0'
+              WERA.mes(6,:)='IfM internal use (LAH)                        ';
+          else
+              WERA.mes(6,:)='IfM internal use (LAH)                        ';
+          end
+          
+          if binar(5)=='0'
+              WERA.mes(7,:)='Master (chirp up)                             ';
+          else
+              WERA.mes(7,:)='Slave (chirp down)                            ';
+          end
+          
+          if binar(2)=='0'
+              WERA.mes(10,:)='Disable FMICW                                 ';
+          else
+              WERA.mes(10,:)='Enable FMICW                                  ';
+          end
+          
+          if binar(3)=='0'
+              if binar(4)=='0'
+                  WERA.mes(9,:)='FMICW sequence #0                             ';
+              else
+                  WERA.mes(9,:)='FMICW sequence #1                             ';
+              end
+          else
+              if binar(4)=='1'
+                  WERA.mes(9,:)='FMICW sequence #2                             ';
+              else
+                  WERA.mes(9,:)='FMICW sequence #3                             ';
+              end
+          end
+          
+          if binar(1)=='0'
+              WERA.mes(11,:)='Chirps up or down                             ';
+          else
+              WERA.mes(11,:)='Triangular Chirps                             ';
+          end
+          
+          %  Check system slave mode
+          CL = bitand(uint8(mode),uint8(i_CHPdwn));
+          if (CL==i_CHPdwn)
+              RXOFFSET = -1 * RXOFFSET;   % System in Slave mode 
+          end
+          %   Check system clock
+          CL = bitand(uint8(mode),uint8(i_clock_90));
+          if (CL==i_clock_90)
+              Fclk = 10^6*180.0;
+	          Divc = 4.0 * 7618.0;	
+          else
+              Fclk = 10^6*181.48430768;
+	          Divc = 4.0 * 7680.0;
+          end
+          WERA.RXOFFSET = RXOFFSET;
+          ADCclk   =  Fclk/Divc;			         % calculate ADC clock
+          Tc_exact = str2double(header.mt)/ADCclk;   % calculate exact chirp length
+          %
+          if (abs((Tc_exact-qT_chirp)) > 0.01*WERA.T_chirp)   % Check if VHF mode
+              ADCclk       = 2* ADCclk;
+              Tc_exact     = str2double(header.mt)/ADCclk;
+              VHF_Sampling = true;
+          end
+          WERA.T_chirp  = Tc_exact;
+          qT_chirp      = Tc_exact;
+         % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    
+              DOP_RX_OFF = RXOFFSET*Fclk/(2^48);
+	          RAN_RX_OFF = 0.0;
+              if (DOP_RX_OFF > 0.0)
+                  while (DOP_RX_OFF > 0.5*Tc_exact)
+                      RAN_RX_OFF = RAN_RX_OFF + 1;
+                      DOP_RX_OFF = DOP_RX_OFF - 1/Tc_exact;
+                  end
+                  
+              else
+                  while (DOP_RX_OFF < -0.5*Tc_exact)
+                      RAN_RX_OFF = RAN_RX_OFF - 1;
+                      DOP_RX_OFF = DOP_RX_OFF + 1/Tc_exact;
+                  end
+              end
+          WERA.DOP_RX_OFF=DOP_RX_OFF;
+          WERA.RAN_RX_OFF=RAN_RX_OFF;
+          
+      case {'FMCASW','FMCALI'}           % RAW & CAL Files case
+%           disp(['Header is ',HDCODE])
+          WERA.SAMPZ  = str2double(header.nser);
+          WERA.HDCODE = HDCODE;
+          WERA.SSR    = str2double(header.ss);        % seconds
+          WERA.MT     = str2double(header.mt);        % samples
+          WERA.NTL    = str2double(header.ntl);
+          RAN_OFF     = str2double(header.ran_off);   % Range cell offset
+          RAN_OFF_m   = RAN_OFF *WERA.RHF*1000.0;
+	      I_100       = round(0.02*RAN_OFF_m)*50;
+	      WERA.RAN_OFF   = I_100/(WERA.RHF*1000);
+	      WERA.RAN_OFF_m = RAN_OFF*WERA.RHF*1000.0d0; % Range offset in meters
+	      RXOFFSET    = str2double(header.rxoffset);
+          WERA.PHASECOR = str2num(header.phase_cor);  % Phase correction for each ant
+          WERA.LAT  = str2double(header.lat);
+          WERA.LON  = str2double(header.lon);
+          WERA.NORD = str2double(header.nord);
+          WERA.PWR  = str2double(header.power);
+          WERA.RATE = str2double(header.rate);
+          WERA.NRRANGES = str2double(header.nrranges);
+          mode        = str2double(header.mode);
+          binar       = '000000000000';
+          binar1      = dec2bin(hex2dec(header.mode));
+          nnn         = length(binar1);
+          for i=12:-1:12-nnn+1
+              binar(i)=binar1(12-i+1);
+          end
+       
+          if binar(11)=='0'
+              WERA.mes(2,:)='Line power for power amplifier is switched OFF';
+          else
+              WERA.mes(2,:)='Line power for power amplifier is switched ON ';
+          end
+          if binar(10)=='0'
+              WERA.mes(2,:)='Internal calibration mode is switched OFF     ';
+          else
+              WERA.mes(2,:)='Internal calibration mode is switched ON      ';
+          end
+          
+          if binar(9)=='0'
+              WERA.mes(3,:)='IfM internal use (jitter)                     ';
+          else
+              WERA.mes(3,:)='IfM internal use (jitter)                     ';
+          end
+          
+          if binar(8)=='0'
+              WERA.mes(4,:)='90.742153846154 MHz system clock              ';
+          else
+              WERA.mes(4,:)='90.000000000000 Mhz system clock              ';
+          end
+          
+          if binar(7)=='0'
+              WERA.mes(5,:)='Leave RX DDS at DC                            ';
+          else
+              WERA.mes(5,:)='Set RX DDS to WERA working frequency          ';
+          end
+          
+          if binar(6)=='0'
+              WERA.mes(6,:)='IfM internal use (LAH)                        ';
+          else
+              WERA.mes(6,:)='IfM internal use (LAH)                        ';
+          end
+          
+          if binar(5)=='0'
+              WERA.mes(7,:)='Master (chirp up)                             ';
+          else
+              WERA.mes(7,:)='Slave (chirp down)                            ';
+          end
+          
+          if binar(2)=='0'
+              WERA.mes(10,:)='Disable FMICW                                 ';
+          else
+              WERA.mes(10,:)='Enable FMICW                                  ';
+          end
+          
+          if binar(3)=='0'
+              if binar(4)=='0'
+                  WERA.mes(9,:)='FMICW sequence #0                             ';
+              else
+                  WERA.mes(9,:)='FMICW sequence #1                             ';
+              end
+          else
+              if binar(4)=='1'
+                  WERA.mes(9,:)='FMICW sequence #2                             ';
+              else
+                  WERA.mes(9,:)='FMICW sequence #3                             ';
+              end
+          end
+          
+          if binar(1)=='0'
+              WERA.mes(11,:)='Chirps up or down                             ';
+          else
+              WERA.mes(11,:)='Triangular Chirps                             ';
+          end
+          
+          %  Check system slave mode
+          CL = bitand(uint8(mode),uint8(i_CHPdwn));
+          if (CL==i_CHPdwn)
+              RXOFFSET = -1 * RXOFFSET;   % System in Slave mode 
+          end
+          %   Check system clock
+          CL = bitand(uint8(mode),uint8(i_clock_90));
+          if (CL==i_clock_90)
+              Fclk = 10^6*180.0;
+	          Divc = 4.0 * 7618.0;	
+          else
+              Fclk = 10^6*181.48430768;
+	          Divc = 4.0 * 7680.0;
+          end
+          WERA.RXOFFSET = RXOFFSET;
+          ADCclk   =  Fclk/Divc;			         % calculate ADC clock
+          Tc_exact = str2double(header.mt)/ADCclk;      % calculate exact chirp length
+          %
+          WERA.T_chirp_or  = WERA.T_chirp;
+          if (abs((Tc_exact-qT_chirp)) > 0.01*WERA.T_chirp)   % Check if VHF mode
+              ADCclk       = 2* ADCclk;
+              Tc_exact     = str2double(header.mt)/ADCclk;
+              VHF_Sampling = true;
+          end
+          WERA.T_chirp  = Tc_exact;      
+          qT_chirp      = Tc_exact;
+         % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    
+              DOP_RX_OFF = RXOFFSET*Fclk/(2^48);
+	          RAN_RX_OFF = 0.0;
+              if (DOP_RX_OFF > 0.0)
+                  while (DOP_RX_OFF > 0.5*Tc_exact)
+                      RAN_RX_OFF = RAN_RX_OFF + 1;
+                      DOP_RX_OFF = DOP_RX_OFF - 1/Tc_exact;
+                  end 
+              else
+                  while (DOP_RX_OFF < -0.5*Tc_exact)
+                      RAN_RX_OFF = RAN_RX_OFF - 1;
+                      DOP_RX_OFF = DOP_RX_OFF + 1/Tc_exact;
+                  end
+              end
+          WERA.DOP_RX_OFF=DOP_RX_OFF;
+          WERA.RAN_RX_OFF=RAN_RX_OFF;
+     otherwise
+          disp(['Header is ',HDCODE,' which is not programmed yet'])
+end  
+   
+end
+%
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%% parseheader.m
+function header=parseHeaderSORT(head0)
+%
+%  Function that reads the header of a WERA file and parses it into a
+%  structure called header that contains on information as a string
+%  character. The Format CODE of the file is stored in the header.code
+%  variable. It covers the following code formats:
+%      FMSOCO, FMSOCN, FMUNSO, FMUNSN,   SORT, FMSPC2
+%      FMSPC3, FMSPEC, FMCALI, _MSPEC, FMCASW, FMWRAD and FMRADG 
+%  but it has been tested only for
+%   FMSOCO (SORT files) 
+%   FMSOCN (RFI files)
+%   FMSPC2 (SPEC files)
+%   FMWRAD (WRAD files)
+%   FMRADG (CRAD files)
+%   FMCASW (RAW files) no tested  the SCAN files have info further below the
+%  comments
+%
+CDE= ['FMSOCO'; 'FMSOCN'; 'FMUNSO'; 'FMUNSN'; '  SORT'; 'FMSPC2'; 'FMSPC3';
+      'FMSPEC'; 'FMCALI'; '_MSPEC'; 'FMCASW'; 'FMRADG'; 'FMWRAD'];
+%
+N = size(head0,1);
+if N~=1
+    head0=head0';
+end
+%
+head = char(head0);
+ix   = strfind(head,'SAMPLES');
+if isempty(ix)==0
+    header.nser = head(1:ix-2);
+else
+    header.nser =-999;
+end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-DECODE HEADER CODE REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+header.code      = head(49:54);
+if ( strcmp(header.code,CDE(1,:))==1 || strcmp(header.code,CDE(2,:))==1 || strcmp(header.code,CDE(3,:))==1 ...
+  || strcmp(header.code,CDE(4,:))==1 || strcmp(header.code,CDE(9,:))==1 || strcmp(header.code,CDE(10,:))==1 ...
+  || strcmp(header.code,CDE(11,:))==1)
+      header.ant  = head(224:225);
+elseif strcmp(header.code,CDE(5,:))==1
+      header.ant = '4';      % direction finding sort data;
+else
+      header.ant = '999';
+end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+if strcmp(header.code, CDE(11,:))==1     % FMCASW
+      header.year  = ''; 
+      header.day   = '';
+      header.month = '';
+      header.hh    = '';
+      header.mm    = '';
+  header.time_base = '';
+  header.site_name = '';
+      header.freq  = '';
+      header.rhf   = '';
+      header.nord  = '';
+    header.T_chirp = '';
+else
+      header.year  = head(23:24); 
+      header.day   = head(16:17);
+      header.month = head(19:21);
+      header.hh    = head(26:27);
+      header.mm    = head(29:31);
+  header.time_base = head(32:34);
+  header.site_name = head(37:48);
+      header.freq  = head(65:71);
+      if strcmp(head(90:94),'RANGE')==1
+        header.rhf  = head(97:103);
+      else
+        header.rhf  = num2str(str2double(head(101:102))*0.15*8);
+      end
+    header.nord = head(118:120);
+ header.T_chirp = head(132:139);
+end
+   
+header.nran        = head(151:153);
+header.lon_grad    = head(170:172);
+header.lon_min     = head(174:175);
+header.lon_sec     = head(177:178);
+header.east_or_west= head(180);
+header.lat_grad    = head(188:190);
+header.lat_min     = head(192:193);
+header.lat_sec     = head(195:196);
+header.north_or_south = head(198);
+lat = str2double(header.lat_grad)+str2double(header.lat_min)/60+str2double(header.lat_sec)/60/60;
+if strcmp(header.north_or_south,'S')==1
+    header.lat=num2str(-lat);
+else
+    header.lat=num2str(lat);
+end 
+lon = str2double(header.lon_grad)+str2double(header.lon_min)/60+str2double(header.lon_sec)/60/60;
+if strcmp(header.east_or_west,'W')==1
+    header.lon=num2str(-lon);
+else
+    header.lon=num2str(lon);
+end 
+%
+if strcmp(head(200:202),'MT:')==1
+	header.mt = head(203:208);
+else
+	header.mt = num2str(768 * 2);
+end
+
+header.power = head(215:218);
+
+if strcmp(head(239),'T')==0
+     header.ran_off = head(239:244);
+elseif head(240)~=':'
+     header.ran_off = head(240:244);
+else
+     header.ran_off = head(241:244);
+end
+ 
+header.rxoffset    = head(254:263);
+ 
+if strcmp(head(264:265),'SS')==1 || strcmp(head(264:265),'ss')==1
+     header.ss = head(267:274);
+else
+     header.ss = '0.0';
+end
+ 
+if (strcmp(header.code, CDE(1,:))==1 || strcmp(header.code, CDE(2,:))==1 || strcmp(header.code, CDE(3,:))==1 ...
+  || strcmp(header.code, CDE(4,:))==1 || strcmp(header.code, CDE(9,:))==1 || strcmp(header.code, CDE(10,:))==1 ...
+  || strcmp(header.code, CDE(11,:))==1  )
+   if strcmp(head(227:229),'MD:')==1
+         header.mode = head(230:232);
+   else
+         header.mode = '';
+   end
+    %
+   if strcmp(head(245:253),'RXOFFSET:')==1
+         header.rxoffset = head(254:263);
+   else
+         header.rxoffset = '0.0';
+   end
+end
+ 
+if (strcmp(header.code, CDE(6,:))==1 || strcmp(header.code, CDE(7,:))==1  || strcmp(header.code, CDE(8,:))==1 ...
+  || strcmp(header.code, CDE(1,:))==1 || strcmp(header.code, CDE(2,:))==1  || strcmp(header.code, CDE(12,:))==1 ...
+  || strcmp(header.code, CDE(13,:))==1 )
+ 
+   if strcmp(head(201:203),'NTL')==1
+        header.ntl = head(205:208);
+   else
+        header.ntl = '13';
+   end
+    
+   if strcmp(head(210:213),'NFTL')==1
+         header.nftl = head(215:218);
+   else
+         header.nftl = '512';
+   end
+end
+    
+if (strcmp(header.code, CDE(6,:))==1  || strcmp(header.code, CDE(7,:))==1 || strcmp(header.code, CDE(8,:))==1 || ...
+    strcmp(header.code, CDE(12,:))==1 || strcmp(header.code, CDE(13,:))==1 ) 
+    header.nx   = head(223:225);
+    header.ny   = head(230:232);
+    header.lat_grid  = head(384+(86:95));
+    header.lon_grid  = head(384+(101:111));
+    header.dgt       = head(384+(117:127));
+end
+
+if (strcmp(header.code, CDE(1,:))==1  || strcmp(header.code, CDE(2,:))==1)
+      phase_cor = head(384+(1:128));
+      header.phase_cor = reshape(phase_cor,8,16)';
+      header.rate      =head(132:139);
+      header.nrranges  =head(151:153);
+end
+if ((strcmp(header.code, CDE(6,:))==1  || strcmp(header.code, CDE(7,:))==1 || strcmp(header.code, CDE(12,:))==1 || ...
+     strcmp(header.code, CDE(13,:))==1) && strcmp(head(384+(65:69)),'NCOV ') == 1)
+      header.n_covered = head(384+(70:79));
+else
+      header.n_covered='';    
+end
+ header.hd          = head(279:281);
+ header.comment     = head(283:384);
+end
+##### SOURCE END #####
+--></body></html>

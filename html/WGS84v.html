@@ -1,0 +1,385 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>WGS84v</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-09"><meta name="DC.source" content="WGS84v.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">WGSV84v.m</a></li><li><a href="#3">Input:</a></li><li><a href="#4">Output:</a></li><li><a href="#5">Example:</a></li><li><a href="#6">Credits</a></li><li><a href="#7">Copyright 2019, George Voulgaris, University of South Carolina</a></li></ul></div><h2 id="1">WGSV84v.m</h2><pre class="codeinput"><span class="keyword">function</span> [d,phi] = WGS84v(lat,lon,lat_o,lon_o)
+</pre><pre class="codeinput"><span class="comment">% [d,phi] = WGSD84v(lat,lon,lat_o,lon_o)</span>
+<span class="comment">%</span>
+<span class="comment">% Function to compute distance and angles between points on the WGS-84</span>
+<span class="comment">% ellipsoidal Earth to within a few millimeters of accuracy  using Vincenty's algorithm.</span>
+<span class="comment">%</span>
+<span class="comment">%  T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid</span>
+<span class="comment">%  with Application of Nested Equations", Survey Review, vol. 23, no. 176,</span>
+<span class="comment">%  April 1975, pp 88-93</span>
+<span class="comment">%</span>
+</pre><h2 id="3">Input:</h2><pre>lat   = Geodetic latitude of grid point(s) (degrees)
+lon   = Geodetic longitude of grid point(s) (degrees)
+lat_o = Geodetic latitude of Radar site (degrees)
+lon_o = Geodetic longitude of Radar site (degrees)</pre><pre>(lat, lon) can be vectors or matrices
+(lat_o,lon_o) must be a single point (radar site)</pre><h2 id="4">Output:</h2><pre>d   = distance between each point (lat,lon) and (lat_o,lon_o) (in km)
+phi = azimuthal angle (in degs) from radar site to grid point(s)</pre><h2 id="5">Example:</h2><pre>[d,phi]=WGS84v( [25.2804153,25.4604010],[-80.1641749,-79.0696098],25.713333,-80.150833)</pre><pre>s =    47.9775 km
+      112.1807 km
+phi = 181.6050 degs North
+      104.2304 degs North</pre><h2 id="6">Credits</h2><pre>Based on an original code by Michael Kleder
+downloaded from:
+http://www.mathworks.com/matlabcentral/fileexchange/5379</pre><pre>Modified for Radar Application and Vectorized by George Voulgaris
+Department of Earth &amp; Ocean Sciences
+University of South Carolina,
+Columbia, SC 29208, USA</pre><pre>Notes:(1) Error correcting code, convergence failure traps, antipodal corrections,
+          polar error corrections, WGS84 ellipsoid parameters, testing, and comments
+          written by Michael Kleder, 2004.
+      (2) Vincenty describes his original algorithm as precise to within
+          0.01 millimeters, subject to the ellipsoidal model.
+      (3) Essentially antipodal points are treated as exactly antipodal,
+          potentially reducing accuracy by a small amount.
+      (4) Failures for points exactly at the poles are eliminated by
+          moving the points by 0.6 millimeters.
+      (5) Vincenty's azimuth formulas are not implemented in this
+          version, but are available as comments in the code.
+      (6) The Vincenty procedure was transcribed verbatim by Peter Cederholm,
+          August 12, 2003. It was modified and translated to English by Michael Kleder.
+          Mr. Cederholm's website is http://www.plan.aau.dk/~pce/
+      (7) Code to test the disagreement between this algorithm and the
+          Mapping Toolbox spherical earth distance function is provided
+          as comments in the code. The maximum differences are:
+          Max absolute difference: 38 kilometers
+          Max fractional difference: 0.56 percent</pre><h2 id="7">Copyright 2019, George Voulgaris, University of South Carolina</h2><p>This file is part of matWERA.</p><p>matWERA is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p><p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p><p>You should have received a copy of the GNU General Public License along with this program.  If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p><p>If you find an error please notify G. Voulgaris at <a href="mailto:gvoulgaris@geol.sc.edu">gvoulgaris@geol.sc.edu</a></p><pre class="codeinput">[m,n] = size(lon);     <span class="comment">% Check dimensions of input data</span>
+lon1 = lon(:);
+lat1 = lat(:);
+<span class="comment">%</span>
+<span class="comment">% -----------------------Input check --------------------------------------</span>
+<span class="comment">%</span>
+ier = find((abs(lat1)&gt;90 | abs(lat_o)&gt;90),1);
+<span class="keyword">if</span> ~isempty(ier)
+    error(<span class="string">'Some input latitudes where found to be &gt; +/- 90 degrees.'</span>)
+<span class="keyword">end</span>
+<span class="comment">%  WGS84 earth ellipsoid axis lengths in meters:</span>
+a = 6378137;          <span class="comment">% definitionally</span>
+b = 6356752.31424518; <span class="comment">% computed from WGS84 earth flattening coefficient definition</span>
+<span class="comment">% convert inputs in degrees to radians:</span>
+lat1 = lat1  * 0.0174532925199433;
+lon1 = lon1  * 0.0174532925199433;
+lat2 = lat_o * 0.0174532925199433;
+lon2 = lon_o * 0.0174532925199433;
+<span class="comment">% -- correct for errors at exact poles by adjusting 0.6 millimeters -------</span>
+i1 = find(abs(pi/2-abs(lat1)) &lt; 1e-10);
+<span class="keyword">if</span> ~isempty(i1)
+    lat1(i1) = sign(lat1(i1))*(pi/2-(1e-10));
+<span class="keyword">end</span>
+i2 = find(abs(pi/2-abs(lat2)) &lt; 1e-10);
+<span class="keyword">if</span> ~isempty(i2)
+    lat2(i2) = sign(lat2(i2))*(pi/2-(1e-10));
+<span class="keyword">end</span>
+<span class="comment">% -------------------------------------------------------------------------</span>
+f    = (a-b)/a;
+U1   = atan((1-f)*tan(lat1));
+U2   = atan((1-f)*tan(lat2));
+lon1 = mod(lon1,2*pi);
+lon2 = mod(lon2,2*pi);
+L    = abs(lon2-lon1);
+i3   = find(L &gt; pi);
+<span class="keyword">if</span> ~isempty(i3)
+    L(i3) = 2*pi - L(i3);
+<span class="keyword">end</span>
+lambda    = L;
+lambdaold = zeros(size(lambda));
+itercount = 0;
+
+<span class="comment">%while ~itercount | abs(lambda-lambdaold) &gt; 1e-12  % force at least one execution</span>
+<span class="keyword">while</span> itercount&lt;=50 &amp;&amp; max(abs(lambda-lambdaold)) &gt; 1e-12
+    itercount = itercount+1;
+<span class="comment">%     if itercount &gt; 50</span>
+<span class="comment">%          warning('Points are essentially antipodal. Precision may be reduced slightly.');</span>
+<span class="comment">%         lambda = pi;</span>
+<span class="comment">%         break</span>
+<span class="comment">%     end</span>
+    lambdaold  = lambda;
+    sinsigma   = sqrt((cos(U2).*sin(lambda)).^2+(cos(U1).*<span class="keyword">...</span>
+                 sin(U2)-sin(U1).*cos(U2).*cos(lambda)).^2);
+    cossigma   = sin(U1).*sin(U2)+cos(U1).*cos(U2).*cos(lambda);
+    sigma      = atan2(sinsigma,cossigma);
+    alpha      = asin(cos(U1).*cos(U2).*sin(lambda)./sin(sigma));
+    cos2sigmam = cos(sigma)-2*sin(U1).*sin(U2)./cos(alpha).^2;
+    C          = f/16*cos(alpha).^2.*(4+f*(4-3*cos(alpha).^2));
+    lambda     = L+(1-C)*f.*sin(alpha).*(sigma+C.*sin(sigma).*<span class="keyword">...</span>
+                (cos2sigmam+C.*cos(sigma).*(-1+2*cos2sigmam.^2)));
+<span class="keyword">end</span>
+<span class="comment">%  correct for convergence failure in the case of essentially antipodal points</span>
+io = find (lambda&gt;pi);    <span class="comment">% In case of antipodal points</span>
+<span class="keyword">if</span> ~isempty(io)
+    lambda(io)=lambda(io)*0+pi;
+<span class="keyword">end</span>
+u2         = cos(alpha).^2*(a^2-b^2)/b^2;
+A          = 1+u2/16384.*(4096+u2.*(-768+u2.*(320-175*u2)));
+B          = u2./1024.*(256+u2.*(-128+u2.*(74-47*u2)));
+deltasigma = B.*sin(sigma).*(cos2sigmam+B/4.*(cos(sigma).*(-1+2*cos2sigmam.^2)<span class="keyword">...</span>
+            -B/6.*cos2sigmam.*(-3+4*sin(sigma).^2).*(-3+4*cos2sigmam.^2)));
+s          = b*A.*(sigma-deltasigma);
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+<span class="comment">% Vicenty's azimuth calculation code (results in radians)</span>
+<span class="comment">% ----------- From point #1 (Grid) to point #2 (Radar)---------------------</span>
+<span class="comment">%a12     = atan2(cos(U2).*sin(lambda),cos(U1).*sin(U2)-sin(U1).*cos(U2).*cos(lambda));</span>
+<span class="comment">%i3      = find(a12 &lt; 0);</span>
+<span class="comment">%a12(i3) = a12(i3)+pi;</span>
+<span class="comment">% ----------- from point #2 (Radar) to point #1 (Grid)---------------------</span>
+a21     = atan2(cos(U1).*sin(lambda),-sin(U1).*cos(U2)+cos(U1).*sin(U2).*cos(lambda));
+i4      = find(a21 &lt; 0);
+a21(i4) = a21(i4)+pi;
+<span class="comment">% ----------- Cases when Longitude difference (L) is 0&lt;L&lt;pi--------------------</span>
+i5      = find((L&gt;0) &amp; (L&lt;pi));
+a21(i5) = a21(i5) + pi;
+i6      = find((lon2-lon1)&lt;0);
+<span class="comment">%-Make sure that the azimuth angle is always on the direction from radar to grid point -</span>
+a21(i6) = 2*pi - a21(i6);
+<span class="comment">%--------------------------------------------------------------------------</span>
+a21     = a21*180/pi;       <span class="comment">% Convert to degrees</span>
+s       = s/1000;           <span class="comment">% Convert to km</span>
+phi     = reshape(a21,m,n); <span class="comment">% Convert back to original size</span>
+d       = reshape(s,m,n);
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% WGSV84v.m
+function [d,phi] = WGS84v(lat,lon,lat_o,lon_o)
+% [d,phi] = WGSD84v(lat,lon,lat_o,lon_o)
+%
+% Function to compute distance and angles between points on the WGS-84 
+% ellipsoidal Earth to within a few millimeters of accuracy  using Vincenty's algorithm.
+%
+%  T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid
+%  with Application of Nested Equations", Survey Review, vol. 23, no. 176,
+%  April 1975, pp 88-93
+%
+%% Input:
+%  lat   = Geodetic latitude of grid point(s) (degrees) 
+%  lon   = Geodetic longitude of grid point(s) (degrees)
+%  lat_o = Geodetic latitude of Radar site (degrees) 
+%  lon_o = Geodetic longitude of Radar site (degrees)
+%
+%  (lat, lon) can be vectors or matrices
+%  (lat_o,lon_o) must be a single point (radar site)
+%
+%% Output:
+%  d   = distance between each point (lat,lon) and (lat_o,lon_o) (in km)
+%  phi = azimuthal angle (in degs) from radar site to grid point(s)
+%               
+%% Example:
+%  [d,phi]=WGS84v( [25.2804153,25.4604010],[-80.1641749,-79.0696098],25.713333,-80.150833)
+%
+%  s =    47.9775 km
+%        112.1807 km
+%  phi = 181.6050 degs North
+%        104.2304 degs North
+%
+%% Credits
+%  Based on an original code by Michael Kleder
+%  downloaded from: 
+%  http://www.mathworks.com/matlabcentral/fileexchange/5379
+%  
+%  Modified for Radar Application and Vectorized by George Voulgaris
+%  Department of Earth & Ocean Sciences
+%  University of South Carolina, 
+%  Columbia, SC 29208, USA
+%
+%  Notes:(1) Error correcting code, convergence failure traps, antipodal corrections,
+%            polar error corrections, WGS84 ellipsoid parameters, testing, and comments
+%            written by Michael Kleder, 2004.
+%        (2) Vincenty describes his original algorithm as precise to within
+%            0.01 millimeters, subject to the ellipsoidal model.
+%        (3) Essentially antipodal points are treated as exactly antipodal,
+%            potentially reducing accuracy by a small amount.
+%        (4) Failures for points exactly at the poles are eliminated by
+%            moving the points by 0.6 millimeters.
+%        (5) Vincenty's azimuth formulas are not implemented in this
+%            version, but are available as comments in the code.
+%        (6) The Vincenty procedure was transcribed verbatim by Peter Cederholm,
+%            August 12, 2003. It was modified and translated to English by Michael Kleder.
+%            Mr. Cederholm's website is http://www.plan.aau.dk/~pce/
+%        (7) Code to test the disagreement between this algorithm and the
+%            Mapping Toolbox spherical earth distance function is provided
+%            as comments in the code. The maximum differences are:
+%            Max absolute difference: 38 kilometers
+%            Max fractional difference: 0.56 percent
+%
+%% Copyright 2019, George Voulgaris, University of South Carolina
+%
+% This file is part of matWERA.
+%
+% matWERA is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+%
+% If you find an error please notify G. Voulgaris at gvoulgaris@geol.sc.edu
+%
+%%
+[m,n] = size(lon);     % Check dimensions of input data
+lon1 = lon(:);
+lat1 = lat(:);
+%
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Input check REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+ier = find((abs(lat1)>90 | abs(lat_o)>90),1);
+if ~isempty(ier)
+    error('Some input latitudes where found to be > +/- 90 degrees.')
+end
+%  WGS84 earth ellipsoid axis lengths in meters:
+a = 6378137;          % definitionally
+b = 6356752.31424518; % computed from WGS84 earth flattening coefficient definition
+% convert inputs in degrees to radians:
+lat1 = lat1  * 0.0174532925199433;
+lon1 = lon1  * 0.0174532925199433;
+lat2 = lat_o * 0.0174532925199433;
+lon2 = lon_o * 0.0174532925199433;
+% REPLACE_WITH_DASH_DASH correct for errors at exact poles by adjusting 0.6 millimeters REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+i1 = find(abs(pi/2-abs(lat1)) < 1e-10);
+if ~isempty(i1)
+    lat1(i1) = sign(lat1(i1))*(pi/2-(1e-10));
+end
+i2 = find(abs(pi/2-abs(lat2)) < 1e-10);
+if ~isempty(i2)
+    lat2(i2) = sign(lat2(i2))*(pi/2-(1e-10));
+end
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+f    = (a-b)/a;
+U1   = atan((1-f)*tan(lat1));
+U2   = atan((1-f)*tan(lat2));
+lon1 = mod(lon1,2*pi);
+lon2 = mod(lon2,2*pi);
+L    = abs(lon2-lon1);
+i3   = find(L > pi);
+if ~isempty(i3)
+    L(i3) = 2*pi - L(i3);
+end
+lambda    = L;
+lambdaold = zeros(size(lambda));
+itercount = 0; 
+
+%while ~itercount | abs(lambda-lambdaold) > 1e-12  % force at least one execution
+while itercount<=50 && max(abs(lambda-lambdaold)) > 1e-12
+    itercount = itercount+1;
+%     if itercount > 50
+%          warning('Points are essentially antipodal. Precision may be reduced slightly.');
+%         lambda = pi;
+%         break
+%     end
+    lambdaold  = lambda;
+    sinsigma   = sqrt((cos(U2).*sin(lambda)).^2+(cos(U1).*...
+                 sin(U2)-sin(U1).*cos(U2).*cos(lambda)).^2);
+    cossigma   = sin(U1).*sin(U2)+cos(U1).*cos(U2).*cos(lambda);
+    sigma      = atan2(sinsigma,cossigma);
+    alpha      = asin(cos(U1).*cos(U2).*sin(lambda)./sin(sigma));
+    cos2sigmam = cos(sigma)-2*sin(U1).*sin(U2)./cos(alpha).^2;
+    C          = f/16*cos(alpha).^2.*(4+f*(4-3*cos(alpha).^2));
+    lambda     = L+(1-C)*f.*sin(alpha).*(sigma+C.*sin(sigma).*...
+                (cos2sigmam+C.*cos(sigma).*(-1+2*cos2sigmam.^2)));
+end
+%  correct for convergence failure in the case of essentially antipodal points
+io = find (lambda>pi);    % In case of antipodal points
+if ~isempty(io)
+    lambda(io)=lambda(io)*0+pi;
+end
+u2         = cos(alpha).^2*(a^2-b^2)/b^2;
+A          = 1+u2/16384.*(4096+u2.*(-768+u2.*(320-175*u2)));
+B          = u2./1024.*(256+u2.*(-128+u2.*(74-47*u2)));
+deltasigma = B.*sin(sigma).*(cos2sigmam+B/4.*(cos(sigma).*(-1+2*cos2sigmam.^2)...
+            -B/6.*cos2sigmam.*(-3+4*sin(sigma).^2).*(-3+4*cos2sigmam.^2)));
+s          = b*A.*(sigma-deltasigma);
+%
+%==========================================================================
+% Vicenty's azimuth calculation code (results in radians)
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- From point #1 (Grid) to point #2 (Radar)REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%a12     = atan2(cos(U2).*sin(lambda),cos(U1).*sin(U2)-sin(U1).*cos(U2).*cos(lambda));
+%i3      = find(a12 < 0);
+%a12(i3) = a12(i3)+pi; 
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- from point #2 (Radar) to point #1 (Grid)REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+a21     = atan2(cos(U1).*sin(lambda),-sin(U1).*cos(U2)+cos(U1).*sin(U2).*cos(lambda));
+i4      = find(a21 < 0);
+a21(i4) = a21(i4)+pi; 
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- Cases when Longitude difference (L) is 0<L<piREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+i5      = find((L>0) & (L<pi));
+a21(i5) = a21(i5) + pi;
+i6      = find((lon2-lon1)<0);
+%-Make sure that the azimuth angle is always on the direction from radar to grid point -
+a21(i6) = 2*pi - a21(i6);     
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+a21     = a21*180/pi;       % Convert to degrees
+s       = s/1000;           % Convert to km
+phi     = reshape(a21,m,n); % Convert back to original size
+d       = reshape(s,m,n);
+end
+##### SOURCE END #####
+--></body></html>

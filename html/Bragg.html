@@ -1,0 +1,157 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Bragg</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-09"><meta name="DC.source" content="Bragg.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Bragg.m</a></li><li><a href="#2">Calculate the Bragg Frequency and Wavelength of a radar system.</a></li><li><a href="#3">Inputs</a></li><li><a href="#4">Outputs</a></li><li><a href="#5">Example:</a></li><li><a href="#6">Copyright 2019, George Voulgaris, University of South Carolina</a></li></ul></div><h2 id="1">Bragg.m</h2><pre class="codeinput"><span class="keyword">function</span> [k_bragg,f_bragg]  = Bragg(f_radar,h)
+</pre><h2 id="2">Calculate the Bragg Frequency and Wavelength of a radar system.</h2><pre>function [k_bragg,f_bragg]  = Bragg(f_radar, [h] )</pre><pre>Function to calculate the Bragg Wavelength of a radar system.
+If the water depth is given, the Frequency of the the Ocean Wave
+that matches the Bragg Wavelength is calculated using the dispersion
+relationship. Otherwise deep water conditions are assumed.
+George Voulgaris, Sept 21, 2012</pre><h2 id="3">Inputs</h2><pre>        f_radar = Frequency of radar system (in MHz)
+        h       = [optional] water depth (in m)
+                   if no h is given a default value of 1000m is used
+                   that makes f to correspond to deep water solution</pre><h2 id="4">Outputs</h2><pre>        k_bragg = Wavenumber of Bragg ocean wave (rads/m)
+        f_bragg = Frequency of Bragg ocean wave (in Hz)</pre><h2 id="5">Example:</h2><p>[k_bragg,f_bragg]  = Bragg(8,30)</p><h2 id="6">Copyright 2019, George Voulgaris, University of South Carolina</h2><p>This file is part of matWERA.</p><p>matWERA is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p><p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p><p>You should have received a copy of the GNU General Public License along with this program.  If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p><p>If you find an error please notify G. Voulgaris at <a href="mailto:gvoulgaris@geol.sc.edu">gvoulgaris@geol.sc.edu</a></p><pre class="codeinput">echo <span class="string">off</span>
+freq    = f_radar(:);                  <span class="comment">% radar frequency</span>
+c_light = 299.792458;                  <span class="comment">% Speed of light (x10^6 m/s)</span>
+g       = 9.81;                        <span class="comment">% Gravitational acceleration (m/s2)</span>
+<span class="comment">%</span>
+L_bragg = c_light./(2*freq);           <span class="comment">% Wavelength of Bragg ocean wave (=0.5*Lem)</span>
+k_bragg = 2*pi./L_bragg;               <span class="comment">% Wavenumber of Bragg ocean wave</span>
+<span class="comment">%</span>
+<span class="keyword">if</span> nargin&lt;2
+    h=1000;                            <span class="comment">% Deep waters</span>
+<span class="keyword">end</span>
+h = h(:);
+<span class="comment">%</span>
+f_bragg = sqrt((g*freq/(c_light*pi)).*k_bragg.*tanh(k_bragg.*h));  <span class="comment">% Frequency of Bragg ocean wave at depth h</span>
+<span class="comment">%</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Bragg.m
+function [k_bragg,f_bragg]  = Bragg(f_radar,h)
+%%  Calculate the Bragg Frequency and Wavelength of a radar system.
+%
+%  function [k_bragg,f_bragg]  = Bragg(f_radar, [h] )
+%   
+%  Function to calculate the Bragg Wavelength of a radar system.
+%  If the water depth is given, the Frequency of the the Ocean Wave
+%  that matches the Bragg Wavelength is calculated using the dispersion 
+%  relationship. Otherwise deep water conditions are assumed.
+%  George Voulgaris, Sept 21, 2012
+%
+%% Inputs
+%          f_radar = Frequency of radar system (in MHz)
+%          h       = [optional] water depth (in m)
+%                     if no h is given a default value of 1000m is used
+%                     that makes f to correspond to deep water solution
+%% Outputs
+%          k_bragg = Wavenumber of Bragg ocean wave (rads/m)
+%          f_bragg = Frequency of Bragg ocean wave (in Hz)
+%
+%% Example:
+% [k_bragg,f_bragg]  = Bragg(8,30)
+%% Copyright 2019, George Voulgaris, University of South Carolina
+%
+% This file is part of matWERA.
+%
+% matWERA is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+%
+% If you find an error please notify G. Voulgaris at gvoulgaris@geol.sc.edu
+%%
+echo off
+freq    = f_radar(:);                  % radar frequency
+c_light = 299.792458;                  % Speed of light (x10^6 m/s)
+g       = 9.81;                        % Gravitational acceleration (m/s2)
+%
+L_bragg = c_light./(2*freq);           % Wavelength of Bragg ocean wave (=0.5*Lem)
+k_bragg = 2*pi./L_bragg;               % Wavenumber of Bragg ocean wave
+%
+if nargin<2
+    h=1000;                            % Deep waters
+end
+h = h(:);
+%             
+f_bragg = sqrt((g*freq/(c_light*pi)).*k_bragg.*tanh(k_bragg.*h));  % Frequency of Bragg ocean wave at depth h
+%
+end
+
+
+##### SOURCE END #####
+--></body></html>

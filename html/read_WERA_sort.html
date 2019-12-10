@@ -1,0 +1,269 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>read_WERA_sort</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-09"><meta name="DC.source" content="read_WERA_sort.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">read_WERA_sort.m</a></li><li><a href="#3">Input</a></li><li><a href="#4">Output</a></li><li><a href="#5">Uses</a></li><li><a href="#6">Copyright 2019, George Voulgaris, University of South Carolina</a></li></ul></div><h2 id="1">read_WERA_sort.m</h2><pre class="codeinput"><span class="keyword">function</span> [WERA,t,R,I,Q]=read_WERA_sort(fname)
+</pre><pre class="codeinput"><span class="comment">% [WERA,t,R,I,Q]=read_WERA_sort(fname)</span>
+<span class="comment">%</span>
+<span class="comment">% Read into Matlab a WERA sorted (SORT/RFI) binary file created by the WERA</span>
+<span class="comment">% supplied Fortran science package. The WERA system was developed</span>
+<span class="comment">% by Dr. Klaus-Werner Gurgel at the University of Hamburg and commercially</span>
+<span class="comment">% available by Helzel-Messtechnic GmbH.</span>
+<span class="comment">%</span>
+</pre><h2 id="3">Input</h2><pre>fname = filename of the sort or rfi file (including extension)
+        examples: fname='20100360051_hat.SORT' or
+                  fname='20100360051_hat.RFI'</pre><h2 id="4">Output</h2><pre>WERA        = All header information describing data collection
+R(RC)       = Range in km
+t(N)        = Time base (in s) for I and Q
+I(ANT,RC,N) = I signal for antenna #ANT, range cell #RC, of length N
+Q(ANT,RC,N) = Q signal for antenna #ANT, range cell #RC, of length N</pre><pre>Cell size is WERA.RHF (in km)
+dt of time series is WERA.RATE (in s)</pre><h2 id="5">Uses</h2><pre>read_WERA_header.m</pre><h2 id="6">Copyright 2019, George Voulgaris, University of South Carolina</h2><p>This file is part of matWERA.</p><p>matWERA is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p><p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p><p>You should have received a copy of the GNU General Public License along with this program.  If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p><p>If you find an error please notify G. Voulgaris at <a href="mailto:gvoulgaris@geol.sc.edu">gvoulgaris@geol.sc.edu</a></p><p>(Last checked on  1/21/2011)</p><pre class="codeinput">echo <span class="string">off</span>
+<span class="keyword">if</span> nargin&lt;1
+fname=<span class="string">'20100360051_hat.SORT'</span>;  <span class="comment">% For testing with a single file (change the name)</span>
+<span class="keyword">end</span>
+<span class="comment">%</span>
+<span class="comment">% -------------------- Open/ Start Reading the data file  -----------------</span>
+<span class="keyword">if</span> ((strcmpi(fname(end-3:end),<span class="string">'SORT'</span>)==1) || (strcmpi(fname(end-2:end),<span class="string">'RFI'</span>)==1))
+    filename  = fname;
+    s         = dir(filename);
+    <span class="keyword">if</span> isempty(s)==1
+        error([fname, <span class="string">' is not found, check path and/or syntax, Aborting'</span>])
+    <span class="keyword">end</span>
+    filebytes = s.bytes;
+<span class="keyword">else</span>
+    error([fname, <span class="string">' is not a SORT or RFI type file file, Aborting'</span>])
+<span class="keyword">end</span>
+<span class="comment">%</span>
+<span class="keyword">if</span> filebytes&gt;512
+    fid = fopen(filename,<span class="string">'rb'</span>,<span class="string">'ieee-le.l64'</span>);  <span class="comment">% Open the file as a binary</span>
+    head = fread(fid,512,<span class="string">'char'</span>);
+<span class="keyword">else</span>
+    error([filename, <span class="string">' size is less than 512 bytes, Aborting'</span>])
+<span class="keyword">end</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">%                          Read the Header Information</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+[WERA] = read_WERA_header(head);
+LONo   = WERA.LON;
+LATo   = WERA.LAT;
+GRAD   = 180.0/pi;
+<span class="comment">% --- Estimate time stamp at the middle of the data collection period ---</span>
+dt           = 0.5*WERA.NSER*WERA.T_chirp;    <span class="comment">% Middle of data in secs</span>
+WERA.TIME(3) = WERA.TIME(3);  <span class="comment">%+dt;           % Add the extra secs</span>
+Time         = datenum([WERA.DATE WERA.TIME]);
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">%                         Read Data from the File</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">switch</span> upper(WERA.HDCODE)
+<span class="comment">%--------------------SORT &amp; RFI files -------------</span>
+    <span class="keyword">case</span> {<span class="string">'FMSOCO'</span>,<span class="string">'FMSOCN'</span>}    <span class="comment">% SORT &amp; RFI files</span>
+        NANT     = WERA.NAnt_SORT;
+        NRRANGES = WERA.NRRANGES;
+        SAMPZ    = WERA.SAMPZ;
+        t        = (0:SAMPZ-1)*WERA.RATE;
+        R        = (0:NRRANGES-1)*WERA.RHF+0.5*WERA.RHF-(0.001*WERA.RAN_OFF_m);
+        I        = zeros(NANT,NRRANGES,SAMPZ);   <span class="comment">% Pre-allocation of memory</span>
+        Q        = I;
+        <span class="keyword">for</span> RC = 1:NRRANGES
+            <span class="keyword">for</span> ANT = 1:NANT
+                T = fread(fid,2*SAMPZ,<span class="string">'real*4'</span>);
+                I(ANT,RC,:)  = T(1:2:2*SAMPZ);
+                Q(ANT,RC,:)  = T(2:2:2*SAMPZ);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+       fclose(fid);
+<span class="comment">%-------------------Future Use--------------------</span>
+    <span class="keyword">case</span> {<span class="string">'FUTURE'</span>}
+     <span class="comment">% To add future cases/formats</span>
+     fclose(fid);
+<span class="comment">%-----------------------------------__------------</span>
+    <span class="keyword">otherwise</span>
+        disp(<span class="string">'Header FMSOCO(SORT) or FMSOCN(RFI) was expected but not found'</span>);
+        fclose(fid);
+        <span class="keyword">return</span>
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% read_WERA_sort.m
+function [WERA,t,R,I,Q]=read_WERA_sort(fname)
+% [WERA,t,R,I,Q]=read_WERA_sort(fname)
+% 
+% Read into Matlab a WERA sorted (SORT/RFI) binary file created by the WERA
+% supplied Fortran science package. The WERA system was developed 
+% by Dr. Klaus-Werner Gurgel at the University of Hamburg and commercially 
+% available by Helzel-Messtechnic GmbH.
+%
+%% Input
+%  fname = filename of the sort or rfi file (including extension)
+%          examples: fname='20100360051_hat.SORT' or
+%                    fname='20100360051_hat.RFI'
+%          
+%% Output
+%  WERA        = All header information describing data collection
+%  R(RC)       = Range in km
+%  t(N)        = Time base (in s) for I and Q
+%  I(ANT,RC,N) = I signal for antenna #ANT, range cell #RC, of length N
+%  Q(ANT,RC,N) = Q signal for antenna #ANT, range cell #RC, of length N
+% 
+%  Cell size is WERA.RHF (in km)
+%  dt of time series is WERA.RATE (in s)
+%
+%% Uses    
+%  read_WERA_header.m
+%     
+%% Copyright 2019, George Voulgaris, University of South Carolina
+%
+% This file is part of matWERA.
+%
+% matWERA is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+%
+% If you find an error please notify G. Voulgaris at gvoulgaris@geol.sc.edu
+% 
+% (Last checked on  1/21/2011)
+% 
+%%
+echo off
+if nargin<1
+fname='20100360051_hat.SORT';  % For testing with a single file (change the name)
+end
+%
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH Open/ Start Reading the data file  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+if ((strcmpi(fname(end-3:end),'SORT')==1) || (strcmpi(fname(end-2:end),'RFI')==1))
+    filename  = fname;
+    s         = dir(filename);
+    if isempty(s)==1
+        error([fname, ' is not found, check path and/or syntax, Aborting'])
+    end 
+    filebytes = s.bytes;
+else
+    error([fname, ' is not a SORT or RFI type file file, Aborting'])
+end
+%
+if filebytes>512 
+    fid = fopen(filename,'rb','ieee-le.l64');  % Open the file as a binary
+    head = fread(fid,512,'char');
+else
+    error([filename, ' size is less than 512 bytes, Aborting'])
+end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%                          Read the Header Information
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+[WERA] = read_WERA_header(head);
+LONo   = WERA.LON;
+LATo   = WERA.LAT;
+GRAD   = 180.0/pi;
+% REPLACE_WITH_DASH_DASH- Estimate time stamp at the middle of the data collection period REPLACE_WITH_DASH_DASH-
+dt           = 0.5*WERA.NSER*WERA.T_chirp;    % Middle of data in secs
+WERA.TIME(3) = WERA.TIME(3);  %+dt;           % Add the extra secs
+Time         = datenum([WERA.DATE WERA.TIME]);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%                         Read Data from the File
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+switch upper(WERA.HDCODE)
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHSORT & RFI files REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    case {'FMSOCO','FMSOCN'}    % SORT & RFI files
+        NANT     = WERA.NAnt_SORT;
+        NRRANGES = WERA.NRRANGES;
+        SAMPZ    = WERA.SAMPZ;
+        t        = (0:SAMPZ-1)*WERA.RATE;
+        R        = (0:NRRANGES-1)*WERA.RHF+0.5*WERA.RHF-(0.001*WERA.RAN_OFF_m);
+        I        = zeros(NANT,NRRANGES,SAMPZ);   % Pre-allocation of memory
+        Q        = I;
+        for RC = 1:NRRANGES
+            for ANT = 1:NANT
+                T = fread(fid,2*SAMPZ,'real*4');
+                I(ANT,RC,:)  = T(1:2:2*SAMPZ);
+                Q(ANT,RC,:)  = T(2:2:2*SAMPZ);
+            end
+        end
+       fclose(fid);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Future UseREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+    case {'FUTURE'}
+     % To add future cases/formats
+     fclose(fid);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-__REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    
+    otherwise
+        disp('Header FMSOCO(SORT) or FMSOCN(RFI) was expected but not found');
+        fclose(fid);
+        return
+end
+end
+
+##### SOURCE END #####
+--></body></html>

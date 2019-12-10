@@ -1,0 +1,284 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>read_WERA_asc_cur</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-09"><meta name="DC.source" content="read_WERA_asc_cur.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">read_WERA_asc_cur.m</a></li><li><a href="#3">Input</a></li><li><a href="#4">Output</a></li><li><a href="#5">Copyright 2019, George Voulgaris, University of South Carolina</a></li></ul></div><h2 id="1">read_WERA_asc_cur.m</h2><pre class="codeinput"><span class="keyword">function</span> [IX,IY,U,V,Uer,Ver,KL]=read_WERA_asc_cur(ftime)
+</pre><pre class="codeinput"><span class="comment">%  [IX,IY,U,V,Uer,Ver, KL]=read_WERA_asc_cur(ftime)</span>
+<span class="comment">%</span>
+<span class="comment">%  Function to read the uv WERA data from a cur_asc file and write</span>
+<span class="comment">%  vectors with locations and velocity components. The cur_asc file has</span>
+<span class="comment">%  been created by the Fortran science package used in the WERA systems developed</span>
+<span class="comment">%  by Dr. Klaus-Werner Gurgel at the University of Hamburg and commercially</span>
+<span class="comment">%  available by Helzel-Messtechnic GmbH.</span>
+<span class="comment">%</span>
+</pre><h2 id="3">Input</h2><pre>ftime: (string) where ftime is the pro_name of the data file
+       this has the format: yyyydddhhmm, where
+yyyy = year (eg 2008)
+ ddd = yearday of yyyy (day 001, Jan 1 of yyyy)
+  hh = hour of data collection
+  mm = minute of data collection</pre><pre>You can generate the file name ftime using function time2werafile.m as
+shown below</pre><pre>ddd  = floor(datenum(year,mo,day,hr,mi,ss))-datenum(year,1,1,1,0,0,0)+1;
+YYYY = num2str(year);
+DDD  = '000';
+HH   = '00';
+Ddd  = num2str(ddd);
+Ndd  = length(Ddd);
+DDD(end-Ndd+1:end) = Ddd;
+hh   = num2str(floor(hr));
+Nhh  = length(hh);
+HH(end-Nhh+1:end) = hh;
+MM   ='00';
+ftime=[YYYY,DDD,HH,MM];</pre><h2 id="4">Output</h2><pre>IX  = latitude index
+IY  = longitude index
+U   = east current component (m/s)
+V   = north current component (m/s)
+Uer = accuracy of east current component (m/s)
+Ver = accuracy of north current component (m/s)</pre><pre>Read but not provided as output: K Class information
+0  : radial information of at least 2 stations are present;
+1  : radial information only from site 1 is available;
+2  : radial information only from site 2 is available;
+..   ...
+n  : radial information only from site n is available</pre><h2 id="5">Copyright 2019, George Voulgaris, University of South Carolina</h2><p>This file is part of matWERA.</p><p>matWERA is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p><p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p><p>You should have received a copy of the GNU General Public License along with this program.  If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p><p>If you find an error please notify G. Voulgaris at <a href="mailto:gvoulgaris@geol.sc.edu">gvoulgaris@geol.sc.edu</a></p><pre class="codeinput">echo <span class="string">off</span>
+<span class="comment">% Construct the cur_asc filename fin = [ftime,'_',StID,'.cur_asc'];</span>
+fin = ftime;
+[fid, message]=fopen(fin,<span class="string">'r'</span>);
+<span class="keyword">if</span> isempty(message)==0
+    IX = nan;
+    IY = nan;
+    KL = nan;
+    U  = nan;
+    V  = nan;
+    Uer= nan;
+    Ver= nan;
+    <span class="keyword">return</span>
+<span class="keyword">else</span>
+a          = fgetl(fid);
+NStations  = str2double(a);
+Lat        = zeros(1,NStations);
+Lon        = zeros(1,NStations);
+<span class="keyword">for</span> Ist = 1:NStations
+    b                = fgetl(fid);
+    time(Ist)        = datenum(b(2:18));
+    St_name(Ist,1:10)= b(25:34);
+    Lon(Ist)         = str2double(b(38:45));
+    Lat(Ist)         = str2double(b(54:61));
+    ew               = b(63);
+    <span class="keyword">if</span> ew==<span class="string">'W'</span> || ew ==<span class="string">'w'</span>
+        Lat(Ist)=-Lat(Ist);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+junk = fgetl(fid);
+junk = fgetl(fid);
+junk = fgetl(fid);
+d    = fgetl(fid);
+LAT0 = str2double(d(3:10));
+LON0 = str2double(d(13:21));
+DGT  = str2double(d(25:30));
+NX   = str2double(d(33:35));
+NY   = str2double(d(38:40));
+<span class="comment">%</span>
+junk = fgetl(fid);
+nos  = fgetl(fid);
+N    = str2double(nos);
+junk = fgetl(fid);
+hunk = fgetl(fid);
+  MATR = fscanf(fid,<span class="string">'%3i %3i %8f %8f %3i %8f %8f \n'</span>,[7,N]);
+  IX = MATR(1,:)';
+  IY = MATR(2,:)';
+  U  = MATR(3,:)';
+  V  = MATR(4,:)';
+  KL = MATR(5,:)';
+  Uer= MATR(6,:)';
+  Ver= MATR(7,:)';
+fclose(fid);
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% read_WERA_asc_cur.m
+function [IX,IY,U,V,Uer,Ver,KL]=read_WERA_asc_cur(ftime)
+%  [IX,IY,U,V,Uer,Ver, KL]=read_WERA_asc_cur(ftime)
+%
+%  Function to read the uv WERA data from a cur_asc file and write
+%  vectors with locations and velocity components. The cur_asc file has
+%  been created by the Fortran science package used in the WERA systems developed 
+%  by Dr. Klaus-Werner Gurgel at the University of Hamburg and commercially 
+%  available by Helzel-Messtechnic GmbH.
+%  
+%% Input 
+%  ftime: (string) where ftime is the pro_name of the data file
+%         this has the format: yyyydddhhmm, where
+%  yyyy = year (eg 2008)
+%   ddd = yearday of yyyy (day 001, Jan 1 of yyyy)
+%    hh = hour of data collection
+%    mm = minute of data collection
+%
+%  You can generate the file name ftime using function time2werafile.m as
+%  shown below
+%
+%  ddd  = floor(datenum(year,mo,day,hr,mi,ss))-datenum(year,1,1,1,0,0,0)+1;
+%  YYYY = num2str(year);
+%  DDD  = '000'; 
+%  HH   = '00';
+%  Ddd  = num2str(ddd);
+%  Ndd  = length(Ddd);
+%  DDD(end-Ndd+1:end) = Ddd;
+%  hh   = num2str(floor(hr));
+%  Nhh  = length(hh);
+%  HH(end-Nhh+1:end) = hh;
+%  MM   ='00';
+%  ftime=[YYYY,DDD,HH,MM];
+%  
+%% Output
+%  IX  = latitude index
+%  IY  = longitude index
+%  U   = east current component (m/s)
+%  V   = north current component (m/s)
+%  Uer = accuracy of east current component (m/s)
+%  Ver = accuracy of north current component (m/s)
+%
+%  Read but not provided as output: K Class information
+%  0  : radial information of at least 2 stations are present;
+%  1  : radial information only from site 1 is available;
+%  2  : radial information only from site 2 is available;
+%  ..   ...
+%  n  : radial information only from site n is available
+%
+%% Copyright 2019, George Voulgaris, University of South Carolina
+%
+% This file is part of matWERA.
+%
+% matWERA is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+%
+% If you find an error please notify G. Voulgaris at gvoulgaris@geol.sc.edu
+%
+echo off
+% Construct the cur_asc filename fin = [ftime,'_',StID,'.cur_asc'];
+fin = ftime;
+[fid, message]=fopen(fin,'r');
+if isempty(message)==0
+    IX = nan;
+    IY = nan;
+    KL = nan;
+    U  = nan;
+    V  = nan;
+    Uer= nan;
+    Ver= nan;
+    return
+else  
+a          = fgetl(fid);
+NStations  = str2double(a);
+Lat        = zeros(1,NStations);
+Lon        = zeros(1,NStations);
+for Ist = 1:NStations
+    b                = fgetl(fid);
+    time(Ist)        = datenum(b(2:18));
+    St_name(Ist,1:10)= b(25:34);
+    Lon(Ist)         = str2double(b(38:45));
+    Lat(Ist)         = str2double(b(54:61));
+    ew               = b(63);
+    if ew=='W' || ew =='w'
+        Lat(Ist)=-Lat(Ist);
+    end
+end
+junk = fgetl(fid);
+junk = fgetl(fid);
+junk = fgetl(fid);
+d    = fgetl(fid);
+LAT0 = str2double(d(3:10));
+LON0 = str2double(d(13:21));
+DGT  = str2double(d(25:30));
+NX   = str2double(d(33:35));
+NY   = str2double(d(38:40));
+%
+junk = fgetl(fid);
+nos  = fgetl(fid);
+N    = str2double(nos);
+junk = fgetl(fid);
+hunk = fgetl(fid);
+  MATR = fscanf(fid,'%3i %3i %8f %8f %3i %8f %8f \n',[7,N]);
+  IX = MATR(1,:)';
+  IY = MATR(2,:)';
+  U  = MATR(3,:)';
+  V  = MATR(4,:)';
+  KL = MATR(5,:)';
+  Uer= MATR(6,:)';
+  Ver= MATR(7,:)';
+fclose(fid);
+end
+##### SOURCE END #####
+--></body></html>
