@@ -30,5 +30,5 @@ A few example files are included and the read_examples.m script show how to use 
 
 If you use it please reference as follows: TBD
 
-George Voulgaris, University of South Carolina, USA
+George Voulgaris, University of South Carolina, USA.
 Email: gvoulgaris@geol.sc.edu
