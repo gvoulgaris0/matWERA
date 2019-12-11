@@ -4,9 +4,9 @@ MATLAB(r) functions for reading the binary files created by the WERA HF Radars m
 
 The functions in the package are:
 
- -**Bragg.m**                  - for estimating the Bragg frequency
+ - **Bragg.m**                  - for estimating the Bragg frequency
  
- -**geog2utm.m**               - for converting from geographical to UTM / metric coordinates
+ - **geog2utm.m**               - for converting from geographical to UTM / metric coordinates
  
  -**read_WERA_asc_cur.m**      - for reading the 2-D (u,v)current data from a cur_asc file
  
