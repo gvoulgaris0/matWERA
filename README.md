@@ -30,7 +30,9 @@ The functions in the package are:
 
 A few example files are included and the read_examples.m script show how to use them. Not all files are found in here as some files are too large to be uploaded to GitHub.
 
-If you use that code please cite as follows: TBD
+If you use that code please cite as follows: 
+
+"George Voulgaris, 2019. matWERA (V1.0.0): A collection of MATLAB(r) functions to read Wellen-Radar (WERA) binary files. (Version V1.0.0). Zenodo. http://doi.org/10.5281/zenodo.3570892"
 
 George Voulgaris, University of South Carolina, USA.
 Email: gvoulgaris@geol.sc.edu
