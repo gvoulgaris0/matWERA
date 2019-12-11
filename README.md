@@ -8,23 +8,23 @@ The functions in the package are:
  
  - **geog2utm.m**               - for converting from geographical to UTM / metric coordinates
  
- -**read_WERA_asc_cur.m**      - for reading the 2-D (u,v)current data from a cur_asc file
+ - **read_WERA_asc_cur.m**      - for reading the 2-D (u,v)current data from a cur_asc file
  
- -**read_WERA_crad.m**         - for reading the current radial binary files
+ - **read_WERA_crad.m**         - for reading the current radial binary files
  
- -**read_WERA_header.m**       - to read and parse the header of any WERA data file
+ - **read_WERA_header.m**       - to read and parse the header of any WERA data file
  
- -**read_WERA_MTfromSORT.m**   - for reading the value MT from the WERA sorted (SORT/RFI) binary file
+ - **read_WERA_MTfromSORT.m**   - for reading the value MT from the WERA sorted (SORT/RFI) binary file
  
- -**read_WERA_sort.m**         - for reading the SORT/RFI files
+ - **read_WERA_sort.m**         - for reading the SORT/RFI files
  
- -**read_WERA_spec.m**         - for reading the SPEC files containing the Doppler spectra estimates
+ - **read_WERA_spec.m**         - for reading the SPEC files containing the Doppler spectra estimates
  
- -**read_WERA_raw.m**           - for reading the RAW / CAL files; used if you want to do your own analysis
+ - **read_WERA_raw.m**           - for reading the RAW / CAL files; used if you want to do your own analysis
  
- -**time2werafile.m**          - to convert a date / time string to the format used for naming the WERA files
+ - **time2werafile.m**          - to convert a date / time string to the format used for naming the WERA files
  
- -**WGS84v.m**                 - to compute distance and angles between points on the WGS-84 ellipsoidal Earth to within a few millimeters of accuracy using Vincenty's algorithm. This function is a vectorized version of the code of Michael Kleder that was downloaded in 2013 and it is  still available at http://www.mathworks.com/matlabcentral/fileexchange/5379.
+ - **WGS84v.m**                 - to compute distance and angles between points on the WGS-84 ellipsoidal Earth to within a few millimeters of accuracy using Vincenty's algorithm. This function is a vectorized version of the code of Michael Kleder that was downloaded in 2013 and it is  still available at http://www.mathworks.com/matlabcentral/fileexchange/5379.
   
 **Michael Kleder (2013). Geodetic distance on WGS84 earth ellipsoid (https://www.mathworks.com/matlabcentral/fileexchange/5379-geodetic-distance-on-wgs84-earth-ellipsoid), MATLAB Central File Exchange. Retrieved, June 2013.**
 
