@@ -26,13 +26,13 @@ The functions in the package are:
 
   - WGS84v.m                 - compute distance and angles between points on the WGS-84 ellipsoidal Earth to within a few millimeters of accuracy using Vincenty's algorithm. This function is a vectorized version of the code of Michael Kleder that was downloaded in 2013 and it is  still available at http://www.mathworks.com/matlabcentral/fileexchange/5379.
   
-  Michael Kleder (2013). Geodetic distance on WGS84 earth ellipsoid (https://www.mathworks.com/matlabcentral/fileexchange/5379-geodetic-distance-on-wgs84-earth-ellipsoid), MATLAB Central File Exchange. Retrieved, June 2013.
+ # Michael Kleder (2013). Geodetic distance on WGS84 earth ellipsoid (https://www.mathworks.com/matlabcentral/fileexchange/5379-geodetic-distance-on-wgs84-earth-ellipsoid), MATLAB Central File Exchange. Retrieved, June 2013.
 
 A few example files are included and the read_examples.m script show how to use them. Not all files are found in here as some files are too large to be uploaded to GitHub.
 
 If you use that code please cite as follows: 
 
-"George Voulgaris, 2019. matWERA (V1.0.0): A collection of MATLAB(r) functions to read Wellen-Radar (WERA) binary files. (Version V1.0.0). Zenodo. http://doi.org/10.5281/zenodo.3570892"
+# George Voulgaris, 2019. matWERA (V1.0.0): A collection of MATLAB(r) functions to read Wellen-Radar (WERA) binary files. (Version V1.0.0). Zenodo. http://doi.org/10.5281/zenodo.3570892
 
 George Voulgaris, University of South Carolina, USA.
 Email: gvoulgaris@geol.sc.edu
