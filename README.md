@@ -28,7 +28,11 @@ The functions in the package are:
 
 A few example files are included and the read_examples.m script show how to use them. Not all files are found in here as some files are too large to be uploaded to GitHub.
 
-If you use it please reference as follows: TBD
+References: 
+
+Michael Kleder (2013). Geodetic distance on WGS84 earth ellipsoid (https://www.mathworks.com/matlabcentral/fileexchange/5379-geodetic-distance-on-wgs84-earth-ellipsoid), MATLAB Central File Exchange. Retrieved, June 2013.
+
+If you use that code please cite as follows: TBD
 
 George Voulgaris, University of South Carolina, USA.
 Email: gvoulgaris@geol.sc.edu
