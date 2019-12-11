@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>read_WERA_header</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-09"><meta name="DC.source" content="read_WERA_header.m"><style type="text/css">
+      --><title>read_WERA_header</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-12-10"><meta name="DC.source" content="read_WERA_header.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -175,7 +175,7 @@ WERA.COMMENTS  = header.comment;
 <span class="comment">%           WERA.DGT   = str2double(header.dgt);</span>
 
     <span class="keyword">case</span> {<span class="string">'FMSOCO'</span>,<span class="string">'FMSOCN'</span>}           <span class="comment">% SORT &amp; RFI Files case</span>
-<span class="comment">%           disp(['Header is ',HDCODE])</span>
+          disp([<span class="string">'Header is '</span>,HDCODE])
           WERA.SAMPZ  = str2double(header.nser);
           WERA.HDCODE = HDCODE;
           WERA.SSR    = str2double(header.ss);         <span class="comment">% seconds</span>
@@ -194,6 +194,7 @@ WERA.COMMENTS  = header.comment;
           WERA.PWR    = str2double(header.power);
           WERA.RATE   = str2double(header.rate);
           WERA.NRRANGES = str2double(header.nrranges);
+          WERA.PHASECOR = str2double(header.phase_cor);  <span class="comment">% Phase correction for each ant (for 'FMSOCO'; 'FMSOCN')</span>
           mode        = str2double(header.mode);
           binar       = <span class="string">'000000000000'</span>;
           binar1      = dec2bin(hex2dec(header.mode));
@@ -313,25 +314,21 @@ WERA.COMMENTS  = header.comment;
           WERA.RAN_RX_OFF=RAN_RX_OFF;
 
       <span class="keyword">case</span> {<span class="string">'FMCASW'</span>,<span class="string">'FMCALI'</span>}           <span class="comment">% RAW &amp; CAL Files case</span>
-<span class="comment">%           disp(['Header is ',HDCODE])</span>
+          disp([<span class="string">'Header is '</span>,HDCODE])
           WERA.SAMPZ  = str2double(header.nser);
           WERA.HDCODE = HDCODE;
           WERA.SSR    = str2double(header.ss);        <span class="comment">% seconds</span>
           WERA.MT     = str2double(header.mt);        <span class="comment">% samples</span>
-          WERA.NTL    = str2double(header.ntl);
           RAN_OFF     = str2double(header.ran_off);   <span class="comment">% Range cell offset</span>
           RAN_OFF_m   = RAN_OFF *WERA.RHF*1000.0;
 	      I_100       = round(0.02*RAN_OFF_m)*50;
 	      WERA.RAN_OFF   = I_100/(WERA.RHF*1000);
 	      WERA.RAN_OFF_m = RAN_OFF*WERA.RHF*1000.0d0; <span class="comment">% Range offset in meters</span>
 	      RXOFFSET    = str2double(header.rxoffset);
-          WERA.PHASECOR = str2num(header.phase_cor);  <span class="comment">% Phase correction for each ant</span>
           WERA.LAT  = str2double(header.lat);
           WERA.LON  = str2double(header.lon);
           WERA.NORD = str2double(header.nord);
           WERA.PWR  = str2double(header.power);
-          WERA.RATE = str2double(header.rate);
-          WERA.NRRANGES = str2double(header.nrranges);
           mode        = str2double(header.mode);
           binar       = <span class="string">'000000000000'</span>;
           binar1      = dec2bin(hex2dec(header.mode));
@@ -789,7 +786,7 @@ switch upper(HDCODE)
 %           WERA.DGT   = str2double(header.dgt);
 
     case {'FMSOCO','FMSOCN'}           % SORT & RFI Files case
-%           disp(['Header is ',HDCODE])
+          disp(['Header is ',HDCODE])
           WERA.SAMPZ  = str2double(header.nser);
           WERA.HDCODE = HDCODE;
           WERA.SSR    = str2double(header.ss);         % seconds
@@ -808,6 +805,7 @@ switch upper(HDCODE)
           WERA.PWR    = str2double(header.power);
           WERA.RATE   = str2double(header.rate);
           WERA.NRRANGES = str2double(header.nrranges);
+          WERA.PHASECOR = str2double(header.phase_cor);  % Phase correction for each ant (for 'FMSOCO'; 'FMSOCN')
           mode        = str2double(header.mode);
           binar       = '000000000000';
           binar1      = dec2bin(hex2dec(header.mode));
@@ -927,25 +925,21 @@ switch upper(HDCODE)
           WERA.RAN_RX_OFF=RAN_RX_OFF;
           
       case {'FMCASW','FMCALI'}           % RAW & CAL Files case
-%           disp(['Header is ',HDCODE])
+          disp(['Header is ',HDCODE])
           WERA.SAMPZ  = str2double(header.nser);
           WERA.HDCODE = HDCODE;
           WERA.SSR    = str2double(header.ss);        % seconds
           WERA.MT     = str2double(header.mt);        % samples
-          WERA.NTL    = str2double(header.ntl);
           RAN_OFF     = str2double(header.ran_off);   % Range cell offset
           RAN_OFF_m   = RAN_OFF *WERA.RHF*1000.0;
 	      I_100       = round(0.02*RAN_OFF_m)*50;
 	      WERA.RAN_OFF   = I_100/(WERA.RHF*1000);
 	      WERA.RAN_OFF_m = RAN_OFF*WERA.RHF*1000.0d0; % Range offset in meters
-	      RXOFFSET    = str2double(header.rxoffset);
-          WERA.PHASECOR = str2num(header.phase_cor);  % Phase correction for each ant
+	      RXOFFSET    = str2double(header.rxoffset);     
           WERA.LAT  = str2double(header.lat);
           WERA.LON  = str2double(header.lon);
           WERA.NORD = str2double(header.nord);
           WERA.PWR  = str2double(header.power);
-          WERA.RATE = str2double(header.rate);
-          WERA.NRRANGES = str2double(header.nrranges);
           mode        = str2double(header.mode);
           binar       = '000000000000';
           binar1      = dec2bin(hex2dec(header.mode));
