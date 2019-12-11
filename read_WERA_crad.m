@@ -65,6 +65,9 @@ echo off
 %
 %       01/22/2011 - Time at the center of the burst is estimated & output.
 %
+if nargin<4 
+    Jy=[]; Ix=[];
+end
 if nargin<2 || isempty(GEO)
     GEO = 'WGS';
 end

@@ -153,7 +153,7 @@ switch upper(HDCODE)
 %           WERA.DGT   = str2double(header.dgt);
 
     case {'FMSOCO','FMSOCN'}           % SORT & RFI Files case
-%           disp(['Header is ',HDCODE])
+          disp(['Header is ',HDCODE])
           WERA.SAMPZ  = str2double(header.nser);
           WERA.HDCODE = HDCODE;
           WERA.SSR    = str2double(header.ss);         % seconds
@@ -172,6 +172,7 @@ switch upper(HDCODE)
           WERA.PWR    = str2double(header.power);
           WERA.RATE   = str2double(header.rate);
           WERA.NRRANGES = str2double(header.nrranges);
+          WERA.PHASECOR = str2double(header.phase_cor);  % Phase correction for each ant (for 'FMSOCO'; 'FMSOCN')
           mode        = str2double(header.mode);
           binar       = '000000000000';
           binar1      = dec2bin(hex2dec(header.mode));
@@ -291,25 +292,21 @@ switch upper(HDCODE)
           WERA.RAN_RX_OFF=RAN_RX_OFF;
           
       case {'FMCASW','FMCALI'}           % RAW & CAL Files case
-%           disp(['Header is ',HDCODE])
+          disp(['Header is ',HDCODE])
           WERA.SAMPZ  = str2double(header.nser);
           WERA.HDCODE = HDCODE;
           WERA.SSR    = str2double(header.ss);        % seconds
           WERA.MT     = str2double(header.mt);        % samples
-          WERA.NTL    = str2double(header.ntl);
           RAN_OFF     = str2double(header.ran_off);   % Range cell offset
           RAN_OFF_m   = RAN_OFF *WERA.RHF*1000.0;
 	      I_100       = round(0.02*RAN_OFF_m)*50;
 	      WERA.RAN_OFF   = I_100/(WERA.RHF*1000);
 	      WERA.RAN_OFF_m = RAN_OFF*WERA.RHF*1000.0d0; % Range offset in meters
-	      RXOFFSET    = str2double(header.rxoffset);
-          WERA.PHASECOR = str2num(header.phase_cor);  % Phase correction for each ant
+	      RXOFFSET    = str2double(header.rxoffset);     
           WERA.LAT  = str2double(header.lat);
           WERA.LON  = str2double(header.lon);
           WERA.NORD = str2double(header.nord);
           WERA.PWR  = str2double(header.power);
-          WERA.RATE = str2double(header.rate);
-          WERA.NRRANGES = str2double(header.nrranges);
           mode        = str2double(header.mode);
           binar       = '000000000000';
           binar1      = dec2bin(hex2dec(header.mode));
