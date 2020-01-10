@@ -38,7 +38,7 @@ A few example files are included and the read_examples.m script show how to use 
 
 If you use that code please cite as follows: 
 
-- **George Voulgaris, 2019. matWERA (V1.0.0): A MATLAB package for reading binary data files recorded by a Wellen-Radar (WERA) HF Radar. (Version V1.0.0). Zenodo. http://doi.org/10.5281/zenodo.3570892. Zenodo. http://doi.org/10.5281/zenodo.3570892**
+- **George Voulgaris, 2019. matWERA: A MATLAB package for reading binary data files recorded by a Wellen-Radar (WERA) HF Radar. Zenodo. http://doi.org/10.5281/zenodo.3570892. Zenodo. http://doi.org/10.5281/zenodo.3570891**
 
 George Voulgaris, University of South Carolina, USA.
 Email: gvoulgaris@geol.sc.edu
