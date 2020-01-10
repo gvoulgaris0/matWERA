@@ -10,6 +10,10 @@ The functions in the package are:
  
  - **geog2utm.m**               - for converting from geographical to UTM / metric coordinates
  
+ - **rads2uv.m**                - for combining 2 or more radials to create a 2-D vector (added on 01/09/2020)
+ 
+ - **rads2uv.py**               - same function as above in python (courtesy of Douglas Cahl, added on 01/09/2020)
+ 
  - **read_WERA_asc_cur.m**      - for reading the 2-D (u,v)current data from a cur_asc file
  
  - **read_WERA_crad.m**         - for reading the current radial binary files
