@@ -1,4 +1,5 @@
-# matWERA: A MATLAB package for reading binary data files recorded by a Wellen-Radar (WERA) HF Radar
+# matWERA: A MATLAB package for reading binary data files recorded by a Wellen-Radar (WERA) HF Radar ![image](https://user-images.githubusercontent.com/48567321/126871099-81238f9e-b65e-4d78-8821-e5b14e227673.png)
+
 
 MATLAB(r) functions for reading the binary files created by the WERA HF Radars manufactured by Helzel Messtechnik GmbH (https://helzel-messtechnik.de). The data files the WERA systems generate are created using the Fortran science software package developed by Dr. Klaus-Werner Gurgel at the University of Hamburg and distributed with the WERA systems.
 
